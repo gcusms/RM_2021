@@ -1,0 +1,95 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "shell" /* 定义任务是被作为进程运行还是在 shell 中作为命令运行，默认是shell，即是在终端中运行，因为终端执行的就是shell的脚本 */,
+      "label": "build" /* 要与launch.json文件里的preLaunchTask的内容保持一致 */,
+      "command": "/usr/bin/g++" /* 这里填写你的编译器地址 */,
+      "args": [
+        /* 类似与qt的Pro文件里开始的那几句 */
+        "-std=c++14", // 静态链接
+        "-static-libgcc",
+        "-Wall", // 开启额外警告
+        /* 说明整个项目所需的头文件路径（.h）*/
+        "-I",
+        "${workspaceFolder}/",
+        "-I",
+        "/usr/local/include/",
+        "-I",
+        "/usr/local/include/opencv4/",
+        "-I",
+        "/usr/local/include/opencv4/opencv2/",
+        /* 工程项目头文件路径 */
+        "-I",
+        "${workspaceFolder}/Basis/RM_AutoControl",
+        "-I",
+        "${workspaceFolder}/Basis/RM_Control",
+        "-I",
+        "${workspaceFolder}/Basis/RM_Kalman",
+        "-I",
+        "${workspaceFolder}/Basis/RM_Link",
+        "-I",
+        "${workspaceFolder}/Basis/RM_Serial",
+        "-I",
+        "${workspaceFolder}/Basis/RM_SolvePnP",
+        "-I",
+        "${workspaceFolder}/Basis/RM_VideoCapture",
+        "-I",
+        "${workspaceFolder}/Model/RM_Armor",
+        "-I",
+        "${workspaceFolder}/Model/RM_Buff",
+        "-I",
+        "${workspaceFolder}/Tools/RM_DataExchange",
+        "-I",
+        "${workspaceFolder}/Tools/RM_FPS",
+        "-I",
+        "${workspaceFolder}/Tools/RM_VideoRecord",
+        "-I",
+        "${workspaceFolder}/Tools/RM_Messenger",
+        "-I",
+        "${workspaceFolder}/Tools/RM_Roi",
+        /* 说明整个项目所需的源文件路径(.cpp) */
+        "-g",
+        "${workspaceFolder}/main.cpp" /* ${workspaceFolder}表示路径从当前项目文件夹开始 */,
+        "-g",
+        "${workspaceFolder}/Basis/RM_AutoControl/RM_AutoControl.cpp",
+        "-g",
+        "${workspaceFolder}/Basis/RM_Kalman/RM_Kalman.cpp",
+        "-g",
+        "${workspaceFolder}/Basis/RM_Link/RM_Link.cpp",
+        "-g",
+        "${workspaceFolder}/Basis/RM_Serial/RM_Serial.cpp",
+        "-g",
+        "${workspaceFolder}/Basis/RM_SolvePnP/RM_SolvePnP.cpp",
+        "-g",
+        "${workspaceFolder}/Basis/RM_VideoCapture/RM_VideoCapture.cpp",
+        "-g",
+        "${workspaceFolder}/Model/RM_Armor/RM_Armor.cpp",
+        "-g",
+        "${workspaceFolder}/Model/RM_Buff/RM_Buff.cpp",
+        "-g",
+        "${workspaceFolder}/Tools/RM_DataExchange/RM_DataExchange.cpp",
+        "-g",
+        "${workspaceFolder}/Tools/RM_FPS/RM_FPS.cpp",
+        "-g",
+        "${workspaceFolder}/Tools/RM_VideoRecord/RM_VideoRecord.cpp",
+        "-g",
+        "${workspaceFolder}/Tools/RM_Messenger/RM_Messenger.cpp",
+        "-g",
+        "${workspaceFolder}/Tools/RM_Roi/RM_Roi.cpp",
+        "-o" /* 编译输出文件的存放路径 */,
+        "${workspaceFolder}/bin/vscoderun.o",
+        /* OpenCV的lib库 */
+        "/usr/local/lib/libopencv_*",
+        "/lib/libMVSDK.so"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}" /* 调试程序时的工作目录，一般为${workspaceFolder}即代码所在目录 */
+      },
+      "problemMatcher": [
+        "$gcc" /* 要使用的问题匹配程序。 */
+      ],
+      "group": "build" /* 将任务标记为可通过 "运行生成任务" 命令访问的生成任务。*/
+    }
+  ]
+}

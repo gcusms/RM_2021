@@ -1,0 +1,548 @@
+<?xml version="1.0"?>
+<opencv_storage>
+<!--~~~~~~~~~~~~~~ Tips ~~~~~~~~~~~~~~-->
+<!-- 
+  1、在此文件内进行debug调参，参数确认后更新至各个模块的参数表中 
+  2、顺序
+    - 判断文件是否开启
+    - 帧率计算设置
+    - 串口设置部分
+    - 调试设置部分       (换电脑需修改)
+    - 相机选择设置
+    - 模式控制部分
+    - 相机参数设置
+    - 自瞄设置部分
+    - 能量机关设置部分    (换电脑需修改)
+    - 角度解算设置部分
+-->
+<!--~~~~~~~~~~~~~~ Tips ~~~~~~~~~~~~~~-->
+
+
+<!--~~~~~~~~~~~~~~ 1 判断文件是否开启 1 ~~~~~~~~~~~~~~-->
+<IS_OPEN>1</IS_OPEN>
+<!--~~~~~~~~~~~~~~ 1 判断文件是否开启 1 ~~~~~~~~~~~~~~-->
+
+
+<!--~~~~~~~~~~~~~~ 2 帧率计算设置 2 ~~~~~~~~~~~~~~--> 
+<COUT_FPS>1</COUT_FPS>
+<!--~~~~~~~~~~~~~~ 2 帧率计算设置 2 ~~~~~~~~~~~~~~-->
+
+
+<!--~~~~~~~~~~~~~~ 3 模式控制部分 3 ~~~~~~~~~~~~~~-->
+<MY_COLOR>0</MY_COLOR>
+<!-- 
+/**
+  @brief: 选择己方阵营
+  @param: 0     串口数据决定
+  @param: 1     己方为红色
+  @param: 2     己方为蓝色
+  @param: 3     不限制颜色
+  @note: 强制颜色模式
+*/ 
+-->
+
+<MY_MODE>0</MY_MODE>
+<!-- 
+/**
+ * @brief :选择己方模式
+ * @param:0     串口数据决定
+ * @param:1     自瞄模式
+ * @param:2     神符模式
+ * @param:3     SENTRY模式
+ * @param:4     BASE模式
+ * @param:5     默认模式
+
+ * @note: 强制运行模式
+ */ 
+ -->
+
+<MY_ROBOT_ID>0</MY_ROBOT_ID>
+<!-- 
+/**
+ * @brief :选择当前机器人ID信息
+ * @param:1     英雄
+ * @param:2     工程
+ * @param:3     步兵
+ * @param:6     无人机
+ * @param:7     哨兵
+ * @param:0     串口数据决定
+ * @note: 强制选择当前机器人ID
+ */ 
+ -->
+
+<BULLET_VOLACITY>0</BULLET_VOLACITY>
+<!-- 
+/**
+  @brief: 选择当前机器人子弹速度
+  @param: 0       串口数据决定
+  @param: 15      15m/s
+  @param: 18      18m/s
+  @param: 30      30m/s
+ * @note: 强制选择当前机器人射速
+ */ 
+-->
+
+
+<IS_PARAM_ADJUSTMENT>0</IS_PARAM_ADJUSTMENT>
+<!-- 
+/**
+  @brief: 是否进入调参模式
+  @param: 0     Release（hsv + 600）
+  @param: 1     Debug
+  @param: 2     Alpha
+  记得调整原参数
+*/ 
+-->
+
+
+<!-- <CAMERA_PARAM_FILE>/home/nuc/workspace/RM_code/RM_2020_vision_code/Basis/RM_VideoCapture/cameraParams/cameraParams_1333.xml</CAMERA_PARAM_FILE> -->
+<!-- <CAMERA_PARAM_FILE>/home/gcurobot/workspace/RM_code/RM_2020_vision_code/Basis/RM_VideoCapture/cameraParams/cameraParams_1333.xml</CAMERA_PARAM_FILE> -->
+<!-- <CAMERA_PARAM_FILE>/home/gcu/workspace/RM/WCJ/RM_code/RM_2020_vision_code/Basis/RM_VideoCapture/cameraParams/cameraParams_407.xml</CAMERA_PARAM_FILE> -->
+<!-- <CAMERA_PARAM_FILE>/home/gcu/RM_update/RM_code/RM_2020_vision_code/Basis/RM_VideoCapture/cameraParams/cameraParam555.xml</CAMERA_PARAM_FILE> -->
+<CAMERA_PARAM_FILE>/home/gcurobot_nuc05/RM_2021/RM_code/RM_2020_vision_code/Basis/RM_VideoCapture/cameraParams/cameraParams_555.xml</CAMERA_PARAM_FILE>
+<!-- 
+/**
+  @brief: 相机标定文件路径
+  记得改路径
+  各相机对应机器人的编号可在标定文件的文件夹里的README中查询
+*/ 
+-->
+
+<PROCESSING_MODE>0</PROCESSING_MODE>
+<!--
+/**
+ * @brief: 设置自瞄预处理的处理模式
+ * @param: 0 BGR
+ * @param: 1 HSV
+ */
+-->
+
+
+<!-- <CAMERA_PTZ_X>0.0</CAMERA_PTZ_X>
+<CAMERA_PTZ_Y>45.5</CAMERA_PTZ_Y>
+<CAMERA_PTZ_Z>-68.9</CAMERA_PTZ_Z> -->
+<!-- 20步兵 -->
+<!-- <CAMERA_PTZ_X>0.0</CAMERA_PTZ_X>
+<CAMERA_PTZ_Y>46</CAMERA_PTZ_Y>
+<CAMERA_PTZ_Z>-99.4</CAMERA_PTZ_Z> -->
+<!-- 21初代步兵 -->
+<CAMERA_PTZ_X>0.0</CAMERA_PTZ_X>
+<CAMERA_PTZ_Y>46</CAMERA_PTZ_Y>
+<CAMERA_PTZ_Z>-93.6</CAMERA_PTZ_Z>
+<!-- 21二代步兵 -->
+<!--
+/**
+  @brief: 相机与云台的X轴偏移 左负右正
+  @brief: 相机与云台的Y轴偏移 上负下正
+  @brief: 相机与云台的Z轴偏移 前正后负
+  @note:  云台相对于相机来讲  相机作为参考点
+*/ 
+-->
+
+<PTZ_BARREL_X>0.0</PTZ_BARREL_X>
+<PTZ_BARREL_Y>0.0</PTZ_BARREL_Y>
+<PTZ_BARREL_Z>0.0</PTZ_BARREL_Z>
+<!-- 
+/**
+  @brief: 云台与枪管的X轴偏移 左负右正
+  @brief: 云台与枪管的Y轴偏移 上负下正
+  @brief: 云台与枪管的Z轴偏移 前正后负
+*/ 
+-->
+<!--~~~~~~~~~~~~~~ 3 模式控制部分 3 ~~~~~~~~~~~~~~-->
+
+
+<!--~~~~~~~~~~~~~~ 4 串口设置部分 4 ~~~~~~~~~~~~~~-->
+<IS_SERIAL_OPEN>1</IS_SERIAL_OPEN>
+<!-- 
+/**
+  @brief: 是否启用串口
+  @param: 0     不启用
+  @param: 1     启用
+*/ 
+-->
+
+<SHOW_SERIAL_INFORMATION>1</SHOW_SERIAL_INFORMATION>
+<!--
+/**
+  @brief: 是否打印串口数据信息
+  @param: 0     不打印
+  @param: 1     打印
+*/
+-->
+<!--~~~~~~~~~~~~~~ 4 串口设置部分 4 ~~~~~~~~~~~~~~-->
+
+
+<!--~~~~~~~~~~~~~~ 5 相机参数设置 5 ~~~~~~~~~~~~~~--> 
+<!-- 普通情况 -->
+<CAMERA_EXPOSURETIME>600</CAMERA_EXPOSURETIME>
+<CAMERA_RESOLUTION_COLS>1280</CAMERA_RESOLUTION_COLS>
+<CAMERA_RESOLUTION_ROWS>800</CAMERA_RESOLUTION_ROWS>
+<!-- <CAMERA_RESOLUTION_COLS>640</CAMERA_RESOLUTION_COLS> -->
+<!-- <CAMERA_RESOLUTION_ROWS>480</CAMERA_RESOLUTION_ROWS> -->
+<CAMERA_BLUE_GAIN>123</CAMERA_BLUE_GAIN>
+<CAMERA_GREEN_GAIN>123</CAMERA_GREEN_GAIN>
+<CAMERA_RED_GAIN>103</CAMERA_RED_GAIN>
+<CAMERA_GAMMA>50</CAMERA_GAMMA>
+<CAMERA_CONTRAST>83</CAMERA_CONTRAST>
+<CAMERA_SATURATION>166</CAMERA_SATURATION>
+
+<!-- 大中午 -->
+<!-- <CAMERA_EXPOSURETIME>50</CAMERA_EXPOSURETIME>
+<CAMERA_RESOLUTION_COLS>1280</CAMERA_RESOLUTION_COLS>
+<CAMERA_RESOLUTION_ROWS>800</CAMERA_RESOLUTION_ROWS> -->
+<!-- <CAMERA_RESOLUTION_COLS>640</CAMERA_RESOLUTION_COLS> -->
+<!-- <CAMERA_RESOLUTION_ROWS>480</CAMERA_RESOLUTION_ROWS> -->
+<!-- <CAMERA_BLUE_GAIN>123</CAMERA_BLUE_GAIN>
+<CAMERA_GREEN_GAIN>123</CAMERA_GREEN_GAIN>
+<CAMERA_RED_GAIN>103</CAMERA_RED_GAIN>
+<CAMERA_GAMMA>82</CAMERA_GAMMA>
+<CAMERA_CONTRAST>200</CAMERA_CONTRAST>
+<CAMERA_SATURATION>169</CAMERA_SATURATION> -->
+
+<!--
+/**
+  @brief: 设置相机的分辨率
+  @param: CAMERA_EXPOSURETIME   相机曝光时间
+  @param: COLS                  为图像的宽度
+  @param: ROWS                  为图像的高度
+  @param: FOV                   为图像对应左上角的偏移值
+  @param: CAMERA_BLUE_GAIN      为相机的蓝色增益 123
+  @param: CAMERA_GREEN_GAIN     为相机的绿色增益 123
+  @param: CAMERA_RED_GAIN       为相机的红色增益 103
+  @param: CAMERA_GAMMA          为相机的伽马增益 119
+  @param: CAMERA_CONTRAST       为相机的对比度 83
+  @param: CAMERA_SATURATION     为相机的饱和度 166
+  @note: 这部分相机文档中是写反的　x轴　和　y轴
+         偏移值计算为 *** (相机最大分辨率 - 当前设置分辨率)/2 ***
+*/
+-->
+
+<CAMERA_CONFIG>0</CAMERA_CONFIG>
+<!--
+/**
+ * @brief: 设置相机参数模式选项
+ * @param: 0 曝光
+ * @param: 1 曝光 + 其他
+ * @param: 2 动态调整 曝光
+ * @param: 3 动态调整 曝光 + 其他
+ * @note: 其他部分包括：对比度、饱和度、伽马值、颜色增益（R G B）
+ *
+ */
+-->
+<!--~~~~~~~~~~~~~~ 5 相机参数设置 5 ~~~~~~~~~~~~~~--> 
+
+
+<!--~~~~~~~~~~~~~~ 6 自瞄设置部分 6 ~~~~~~~~~~~~~~-->
+<!-- BGR -->
+<RED_ARMOR_GRAY_TH>30</RED_ARMOR_GRAY_TH>
+<RED_ARMOR_COLOR_TH>70</RED_ARMOR_COLOR_TH>
+<BLUE_ARMOR_GRAY_TH>30</BLUE_ARMOR_GRAY_TH>
+<BLUE_ARMOR_COLOR_TH>70</BLUE_ARMOR_COLOR_TH>
+<!-- RED_ARMOR_GRAY_TH 27 or 41 30~60 85-->
+<!-- RED_ARMOR_COLOR_TH 100 -->
+<!--BLUE_ARMOR_GRAY_TH 28~61 or 110-->
+<!--BLUE_ARMOR_COLOR_TH 100 17 29-->
+
+<!-- HSV-red -->
+<H_RED_MAX>60</H_RED_MAX> 
+<!-- 41 -->
+<H_RED_MIN>0</H_RED_MIN>
+<S_RED_MAX>255</S_RED_MAX>
+<S_RED_MIN>150</S_RED_MIN> 
+<!-- 111 140 95 太阳光就把s调高150-->
+<V_RED_MAX>255</V_RED_MAX>
+<V_RED_MIN>30</V_RED_MIN> 
+<!-- 106 95 60 24-->
+
+<!-- 大中午 -->
+<!-- <H_RED_MAX>56</H_RED_MAX> -->
+<!-- 25 -->
+<!-- <H_RED_MIN>0</H_RED_MIN>
+<S_RED_MAX>255</S_RED_MAX>
+<S_RED_MIN>160</S_RED_MIN> -->
+<!-- 111 -->
+<!-- <V_RED_MAX>255</V_RED_MAX>
+<V_RED_MIN>76</V_RED_MIN> -->
+<!-- 16 --> 
+
+<!-- HSV-blue -->
+<H_BLUE_MAX>170</H_BLUE_MAX>
+<H_BLUE_MIN>100</H_BLUE_MIN>
+<S_BLUE_MAX>255</S_BLUE_MAX>
+<S_BLUE_MIN>150</S_BLUE_MIN>
+<V_BLUE_MAX>255</V_BLUE_MAX>
+<V_BLUE_MIN>30</V_BLUE_MIN>
+<!-- 大中午 -->
+<!-- <H_BLUE_MAX>192</H_BLUE_MAX>
+<H_BLUE_MIN>115</H_BLUE_MIN>
+<S_BLUE_MAX>245</S_BLUE_MAX>
+<S_BLUE_MIN>148</S_BLUE_MIN>
+<V_BLUE_MAX>255</V_BLUE_MAX>
+<V_BLUE_MIN>113</V_BLUE_MIN> -->
+
+<RATIO_W_H_MAX>1.0</RATIO_W_H_MAX> <!-- 12 -->
+<RATIO_W_H_MIN>0.1</RATIO_W_H_MIN> <!-- 2.02 -->
+<LIGHT_AREA>5</LIGHT_AREA><!-- 13 -->
+<LIGHT_HEIGHT>15</LIGHT_HEIGHT> <!-- 0 -->
+<LIGHT_LENGTH_MIN>8</LIGHT_LENGTH_MIN> <!-- 25 -->
+<LIGHT_LENGTH_MAX>4000</LIGHT_LENGTH_MAX> <!-- 5000 -->
+<!--
+/**
+ * @brief: 灯条筛选条件阈值
+ * @param: RATIO_W_H_TH 宽高比 0.4 3.05~8.92
+ * @param: LIGHT_AREA   面积
+ */
+-->
+
+<DIFF_LIGHT_Y>0.2</DIFF_LIGHT_Y> <!-- 0.4 -->
+<DISTANCE_MIN_TH>10</DISTANCE_MIN_TH>
+<DISTANCE_MULTIPLE_TH>8</DISTANCE_MULTIPLE_TH>
+
+<DIFF_ANGLE_TH_SAME>8</DIFF_ANGLE_TH_SAME>
+
+<LIGHT_SIZE_RATIO_MAX>7.2</LIGHT_SIZE_RATIO_MAX>
+<LIGHT_SIZE_RATIO_MIN>0.0</LIGHT_SIZE_RATIO_MIN>
+<MATCHING_TH>2</MATCHING_TH>
+<!--
+/**
+ * @brief: 装甲板筛选条件阈值
+ * @param: DIFF_LIGHT_Y           高度差
+ * @param: DISTANCE_MULTIPLE_TH   间距倍数
+ * @param: DISTANCE_MIN_TH        间距最小值
+ * @param: DIFF_ANGLE_TH          角度差
+ * @param: LIGHT_SIZE_RATIO_MAX   灯条大小比例最大值 3.3
+ * @param: LIGHT_SIZE_RATIO_MIN   灯条大小比例最小值
+ * @param: MATCHING_TH            匹配范围
+ */
+-->
+
+<!-- <BIG_ARMOR_RATIO_MAX>7</BIG_ARMOR_RATIO_MAX>
+<BIG_ARMOR_RATIO_MIN>3.6</BIG_ARMOR_RATIO_MIN>
+<SMALL_ARMOR_RATIO_MAX>3.6</SMALL_ARMOR_RATIO_MAX>
+<SMALL_ARMOR_RATIO_MIN>0</SMALL_ARMOR_RATIO_MIN> -->
+
+<ARMOR_TYPE_TH>2.9</ARMOR_TYPE_TH>
+<!--
+/**
+ * @brief: 装甲板类型判断阈值
+ * @param: BIG_ARMOR_RATIO_MAX    大装甲最大值
+ * @param: BIG_ARMOR_RATIO_MIN    大装甲最小值
+ * @param: SMALL_ARMOR_RATIO_MAX  小装甲最大值
+ * @param: SMALL_ARMOR_RATIO_MIN  小装甲最小值
+ */
+-->
+
+<IS_NUMBER_PREDICT_OPEN>0</IS_NUMBER_PREDICT_OPEN>
+<!-- 
+/**
+  @brief: 是否启用识别装甲板数字
+  @param: 0     不启用
+  @param: 1     启用
+*/ 
+-->
+
+<IS_ENABLE_ROI_RECT>0</IS_ENABLE_ROI_RECT>
+<!--  
+/**
+  @brief: 启用ROI_RECT截取图像
+  @param: 0     不启用
+  @param: 1     启用
+*/ 
+-->
+
+<FIRST_LOSE_CNT_MAX>5</FIRST_LOSE_CNT_MAX>
+<SECOND_LOSE_CNT_MAX>10</SECOND_LOSE_CNT_MAX>
+<!-- 
+/**
+  @brief: 丢失目标上限次数
+*/ 
+-->
+
+<FIRST_LEVEL_LOSS_RANGE>200</FIRST_LEVEL_LOSS_RANGE>
+<SECOND_LEVEL_LOSS_RANGE>300</SECOND_LEVEL_LOSS_RANGE>
+<!-- 
+/**
+  @brief: 丢失目标的搜索范围
+*/ 
+-->
+
+<IS_DRAW_LIGHT>1</IS_DRAW_LIGHT>
+<!-- 
+/**
+  @brief: 是否绘制符合条件的light
+  @param: 0     不绘制
+  @param: 1     绘制
+  @note: 黄色
+*/ 
+-->
+
+<IS_DRAW_ARMOR_RECT>1</IS_DRAW_ARMOR_RECT>
+<!-- 
+/**
+  @brief: 是否绘制符合条件的armor
+  @param: 0     不绘制
+  @param: 1     绘制
+  @note: 青色
+*/ 
+-->
+<!--~~~~~~~~~~~~~~ 6 自瞄设置部分 6 ~~~~~~~~~~~~~~-->
+
+
+<!--~~~~~~~~~~~~~~ 7 能量机关设置部分 7 ~~~~~~~~~~~~~~-->
+<BUFF_GROUND_H>1586</BUFF_GROUND_H>
+<ROBOT_H>330</ROBOT_H>
+<UPLAND_H>850</UPLAND_H>
+<BUFF_ROBOT_Z>6915.3402</BUFF_ROBOT_Z>
+<!--
+/**
+  @brief: 设置能量机关打击模型(视机器人实际情况来定，当前参数为大头娃娃)
+  @param: BUFF_GROUND_H       扇叶最低点到地面的高度
+  @param: ROBOT_H             机器人枪管高度
+  @param: UPLAND_H            高台平面的高度
+  @param: BUFF_ROBOT_Z        步兵距离能量机关水平距离 6915.340249311
+*/
+-->
+<!--~~~~~~~~~~~~~~ 7 能量机关设置部分 7 ~~~~~~~~~~~~~~-->
+
+
+<!--~~~~~~~~~~~~~~ 8 角度解算设置部分 8 ~~~~~~~~~~~~~~-->
+<IS_DRAW_COORDINATE>0</IS_DRAW_COORDINATE>
+<!-- 
+/**
+  @brief: 是否绘制坐标系
+  @param: 0     不绘制
+  @param: 1     绘制
+*/ 
+-->
+
+<SHOW_PNP_INFORMATION>1</SHOW_PNP_INFORMATION>
+<!-- 
+  
+/**
+  @brief: 是否打印PNP解算角度信息
+  @param: 0     不打印
+  @param: 1     打印
+*/ 
+-->
+
+
+<BIG_ARMOR_SIZE_W>227</BIG_ARMOR_SIZE_W>
+<BIG_ARMOR_SIZE_H>55</BIG_ARMOR_SIZE_H>
+<!-- 
+/**
+  @brief: 大装甲板的真实宽度（mm）250
+  @brief: 大装甲板的真实高度（mm）65
+*/ 
+-->
+
+<SMALL_ARMOR_SIZE_W>135</SMALL_ARMOR_SIZE_W>
+<SMALL_ARMOR_SIZE_H>45</SMALL_ARMOR_SIZE_H>
+<!-- 
+/**
+  @brief: 小装甲板的真实宽度（mm） 140 越小越近
+  @brief: 小装甲板的真实高度（mm）60
+*/ 
+-->
+
+<BUFF_ARMOR_SIZE_W>250</BUFF_ARMOR_SIZE_W>
+<BUFF_ARMOR_SIZE_H>65</BUFF_ARMOR_SIZE_H>
+<!-- 
+/**
+  @brief: 大符装甲板的真实宽度（mm）TODO:Need to test
+  @brief: 大符装甲板的真实宽度（mm）TODO:Need to test
+*/ 
+-->
+
+<OFFSET_ARMOR_PITCH>0.0</OFFSET_ARMOR_PITCH>
+<OFFSET_ARMOR_YAW>0.0</OFFSET_ARMOR_YAW>
+<OFFSET_PITCH_SYMBOL>0</OFFSET_PITCH_SYMBOL>
+<OFFSET_YAW_SYMBOL>0</OFFSET_YAW_SYMBOL>
+<!-- 
+/**
+  @brief: OFFSET_ARMOR_PITCH   pitch轴的角度固定补偿（枪管） 正向下，负向上
+  @brief: OFFSET_ARMOR_YAW    yaw轴的角度固定补偿（枪管）
+  @brief: OFFSET_PITCH_SYMBOL pitch轴的角度固定补偿方向 0： 1：TODO
+  @brief: OFFSET_YAW_SYMBOL yaw轴的角度固定补偿方向 0： 1： TODO
+*/ 
+-->
+
+<!--~~~~~~~~~~~~~~ 8 角度解算设置部分 8 ~~~~~~~~~~~~~~-->
+
+
+
+<!--~~~~~~~~~~~~~~ 9 调试设置部分 9 ~~~~~~~~~~~~~~-->
+<SHOW_OUTPUT_IMG>1</SHOW_OUTPUT_IMG>
+<!-- 
+/**
+  @brief: 是否显示输出图像
+  @param: 0     不显示
+  @param: 1     显示
+*/ 
+-->
+
+
+<IS_SHOW_BIN_IMG>1</IS_SHOW_BIN_IMG>
+<!-- 
+/**
+  @brief: 是否显示二值图像
+  @param: 0     不显示
+  @param: 1     显示
+*/ 
+-->
+
+
+<ANALYZE_EACH_FRAME>1</ANALYZE_EACH_FRAME>
+<!-- 
+/**
+ * @brief:是否分析每一帧 （未使用）
+ * @param: 0    否
+ * @param: 1    是
+ */ 
+ -->
+
+<SHOW_DEBUG_INFORMATION>1</SHOW_DEBUG_INFORMATION>
+<!-- 
+/**
+  @brief: 是否打印调试信息 （未使用）
+  @param: 0     不打印
+  @param: 1     打印
+  @note: 包括深度，角度等
+*/ 
+-->
+<!--~~~~~~~~~~~~~~ 9 调试设置部分 9 ~~~~~~~~~~~~~~-->
+
+
+<!--~~~~~~~~~~~~~~ 10 相机选择设置 10 ~~~~~~~~~~~~~~-->
+<CAMERA_OR_VEDIO>0</CAMERA_OR_VEDIO>
+<!--
+/**
+ * @brief 使用相机或者视频
+ * @param: 0      相机
+ * @param: 1      视频
+ */
+ -->
+
+<ISOPEN_INDUSTRY_CAPTURE>0</ISOPEN_INDUSTRY_CAPTURE>
+<!--
+/**
+  * @brief: 是否使用工业相机
+  * @param: 0     使用工业相机
+  * @param: 1     使用普通USB相机
+  */
+-->
+
+<USB_CAPTURE>0</USB_CAPTURE>
+<!-- <AVI_CAPTURE>/home/jun/workplace/Vedio/camera_MaxBuff21.avi</AVI_CAPTURE> -->
+<AVI_CAPTURE>/home/jun/workplace/Vedio/camera_MaxBuff1.avi</AVI_CAPTURE>
+<!-- <AVI_CAPTURE>/home/gcu/workspace/Vedio/camera_MaxBuff15.avi</AVI_CAPTURE> -->
+<!--
+/** 
+ *  @brief: 相机的默认值
+ *  @note: 
+ *  @note: 使用普通USB相机时，Opencv的VideoCapture接口的值
+ */
+-->
+<!--~~~~~~~~~~~~~~ 10 相机选择设置 10 ~~~~~~~~~~~~~~-->
+
+</opencv_storage>
