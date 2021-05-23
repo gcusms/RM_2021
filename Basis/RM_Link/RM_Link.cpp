@@ -36,7 +36,7 @@ RM_Link::RM_Link()
     }
 
     // 卡尔曼预测 TODO
-
+    this->kalman = make_unique<RM_kalmanfilter>();
     // 初始化帧率计算模块
     this->fps = make_unique<RM_FPS>();
 
@@ -74,6 +74,7 @@ void RM_Link::run()
     int fire = 0;
     float yaw = 0;
     float lost_yaw  = 0;
+    int armor_num = 0;
     while (true) {
         num++;//
         cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-" << endl;
@@ -141,34 +142,39 @@ void RM_Link::run()
 
                 // 地面单位模式的自瞄
                 // 成功进行串口数据的准备，否则则按需发送数据（一定时间内用预测值，一定时间后发送0）
-                if (this->armor->identificationTask(*frame, this->messenger.get())) {
-                     if(num %4 == 0)
+                if (this->armor->identificationTask(*frame, this->messenger.get())) 
+                {
+                    armor_num++;
+                    if(armor_num >3)
                     {
-                        if(temp %2 == 0)
+                        if(num %2 == 0)
                         {
-                            lost_yaw = this->messenger->getSendInfo().angle_yaw;
-                        }
-                        else{
-
-                            yaw = this->messenger->getSendInfo().angle_yaw - lost_yaw;
-                            if(yaw < 0.5)
+                            if(temp %2 == 0)
                             {
-                                yaw =0;
+                                lost_yaw = this->messenger->getSendInfo().angle_yaw;
                             }
+                            else{
+                                yaw = this->messenger->getSendInfo().angle_yaw - lost_yaw;
+                            }
+                            temp++;
                         }
-                        temp++;
                     }
-                    //         cout<<"yaw = "<<yaw<<endl;
-                    //         cout<<"yaw = "<<yaw<<endl;
-                    //         cout<<"yaw = "<<yaw<<endl;
-                    //         cout<<"yaw = "<<yaw<<endl;
-                    // 卡尔曼预测 TODO
-
+                    this->armor->ArmorVertex(atan2(yaw, messenger->getSendInfo().depth)*1755/messenger->getSendInfo().depth);
+                    // // 卡尔曼预测 TODO
+                    // Point kalman_point = this->armor->returnFinalArmor().returnRect().center;
+                    // kalman_point.x = this->armor->returnFinalArmor().returnRect().center.x + atan2(yaw, messenger->getSendInfo().depth)*1755/messenger->getSendInfo().depth;
+                    // kalman_point = this->kalman->predict_point(kalman_point, 0.005);
+                    // circle(*src_img, kalman_point, 5, Scalar(0, 255, 255), 1);
                     // 角度结算
-
                     this->solver->runSolvePnP(this->armor->returnTarget2DPoint(),
                                               this->armor->returnFinalArmor().returnArmorType(),
                                               *this->src_img);
+                    // RotatedRect box = RotatedRect(kalman_point, 
+                    //         this->armor->returnFinalArmor().returnRect().size, 
+                    //         this->armor->returnFinalArmor().returnRect().angle);
+                    // point_vexrt(box);
+                    // this->solver->runSolvePnP(this->target_2d_1,  this->armor->returnFinalArmor().returnArmorType(),
+                    //                           *this->src_img);
 
                     // 获取角度
                     this->solver->getAngle(this->messenger.get(), yaw);
@@ -197,6 +203,9 @@ void RM_Link::run()
                         }
 
                     // 自动控制开火 TODO
+                }
+                else{
+                    armor_num = 0;
                 }
                 // 选择性跳过
                 break;
@@ -284,4 +293,38 @@ void RM_Link::run()
         cout << "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-" << endl;
         cout << endl;
     }
+}
+
+
+
+void RM_Link::point_vexrt(RotatedRect box)
+{
+    Point2f vertex[4];
+    box.points(vertex);
+    Point2f lu, ld, ru, rd;
+    sort(vertex, vertex + 4, [](const Point2f& p1, const Point2f& p2) { return p1.x < p2.x;
+    });
+
+    if (vertex[0].y < vertex[1].y){
+        lu = vertex[0];
+        ld = vertex[1];
+    }
+    else{
+        lu = vertex[1];
+        ld = vertex[0];
+    }
+    if (vertex[2].y < vertex[3].y)	{
+        ru = vertex[2];
+        rd = vertex[3];
+    }
+    else {
+        ru = vertex[3];
+        rd = vertex[2];
+    }
+    
+    target_2d_1.clear();
+    target_2d_1.emplace_back(lu);
+    target_2d_1.emplace_back(ru);
+    target_2d_1.emplace_back(rd);
+    target_2d_1.emplace_back(ld);
 }

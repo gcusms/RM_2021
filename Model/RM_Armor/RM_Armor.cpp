@@ -1504,6 +1504,9 @@ CandidateArmor& RM_Armor::returnFinalArmor()
     return this->final_armor;
 }
 
+bool RM_Armor::returnIsLastData(){
+    return this->is_last_data_catch;
+}
 /**
  * @brief 计算两点距离
  * @param  p1               第一个点
@@ -1515,4 +1518,12 @@ float centerDistance(const Point& p1, const Point& p2)
     float D =
         static_cast<float>(sqrt(((p1.x - p2.x) * (p1.x - p2.x)) + ((p1.y - p2.y) * (p1.y - p2.y))));
     return D;
+}
+
+void RM_Armor::ArmorVertex(int a)
+{
+    target_2d[0].x +=a;
+    target_2d[1].x +=a;
+    target_2d[2].x +=a;
+    target_2d[3].x +=a;
 }

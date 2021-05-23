@@ -11,7 +11,7 @@
 using namespace cv;
 
 // debug测试的时候开启
-#define DEBUG
+// #define DEBUG
 
 // 预处理的模式
 enum Processing_Mode {
@@ -377,6 +377,7 @@ class CandidateArmor {
 // 自瞄类
 class RM_Armor {
   public:
+    void ArmorVertex(int a);
     RM_Armor(const Armor_Cfg& _armor_config, const Roi_Cfg& _roi_config);
     ~RM_Armor();
 
@@ -386,6 +387,8 @@ class RM_Armor {
     vector<Point2f> returnTarget2DPoint();
 
     CandidateArmor& returnFinalArmor();
+
+    bool returnIsLastData();
 
   private:
     // 预处理
@@ -440,7 +443,8 @@ class RM_Armor {
 
     // 装甲板顶点排序
     void sortArmorVertex();
-
+    
+    float yaw = 0; 
   private:
     // 参数结构体
     Armor_Cfg armor_config;

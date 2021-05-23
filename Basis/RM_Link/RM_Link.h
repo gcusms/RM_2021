@@ -5,8 +5,11 @@
 #include "Basis/RM_VideoCapture/RM_VideoCapture.h"
 #include "Tools/RM_DataExchange/RM_DataExchange.h"
 #include "Tools/RM_FPS/RM_FPS.h"
+#include "Basis/RM_Kalman/RM_Kalman.h"
 #include "Tools/RM_Messenger/RM_Messenger.h"
 #include <memory>
+#include <opencv4/opencv2/opencv.hpp>
+#include <algorithm>
 #include <opencv4/opencv2/opencv.hpp>
 using namespace cv;
 
@@ -18,14 +21,17 @@ class RM_Link {
     // 总运行函数
     void run();
 
+    void point_vexrt(RotatedRect box);
+    
   private:
+  vector<Point2f>target_2d_1;
     /* Tools */
     /* 计算帧率 */
     unique_ptr<RM_FPS> fps;
     /* 录制视频 TODO 添加开关*/
     /* 文件数据交换 */
     unique_ptr<RM_DataExchange> data_exchange;
-
+    unique_ptr<RM_kalmanfilter> kalman;
   private:
     //各部分对象声明
     /* Basis长期启动 */
