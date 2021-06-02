@@ -5,11 +5,11 @@
 
 class Rm_Solvepnp : public Abstract_Solvepnp_ {
  private:
-  cv::Mat cameraMatrix, distCoeffs;
-  cv::Mat rvec = cv::Mat::zeros(3, 3, CV_64FC1);
-  cv::Mat tvec = cv::Mat::zeros(3, 1, CV_64FC1);
-  std::vector<cv::Point2f> target_2d;
-  std::vector<cv::Point3f> object_3d;
+  cv::Mat cameraMatrix_, distCoeffs_;
+  cv::Mat rvec_ = cv::Mat::zeros(3, 3, CV_64FC1);
+  cv::Mat tvec_ = cv::Mat::zeros(3, 1, CV_64FC1);
+  std::vector<cv::Point2f> target_2d_;
+  std::vector<cv::Point3f> object_3d_;
 
   Solvepnp_Cfg pnp_config_;
 

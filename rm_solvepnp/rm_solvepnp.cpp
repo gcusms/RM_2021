@@ -9,8 +9,8 @@ Rm_Solvepnp::Rm_Solvepnp(std::string _camera_path,
   //读取摄像头标定xml文件
   cv::FileStorage fs_camera(_camera_path, cv::FileStorage::READ);
   //读取相机内参和畸变矩阵
-  fs_camera["camera-matrix"] >> cameraMatrix;
-  fs_camera["distortion"] >> distCoeffs;
+  fs_camera["camera-matrix"] >> cameraMatrix_;
+  fs_camera["distortion"] >> distCoeffs_;
   //读取自定义xml文件
   cv::FileStorage fs_config(_pnp_config_path, cv::FileStorage::READ);
   //相机与云台偏移量
@@ -30,8 +30,8 @@ Rm_Solvepnp::Rm_Solvepnp(std::string _camera_path,
   //打印
   std::cout << "------------------------------------------------------------"
             << std::endl;
-  std::cout << cameraMatrix << std::endl;
-  std::cout << distCoeffs << std::endl;
+  std::cout << cameraMatrix_ << std::endl;
+  std::cout << distCoeffs_ << std::endl;
 
   std::cout << std::endl;
 
@@ -94,17 +94,17 @@ Rm_Solvepnp::Rm_Solvepnp() {}
 cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
                                       cv::Mat &_src_img,
                                       cv::RotatedRect _rect) {
-  object_3d = this->initialize_3d_Points(_armor_type);
-  target_2d = this->initialize_2d_Points(_rect);
+  object_3d_ = this->initialize_3d_Points(_armor_type);
+  target_2d_ = this->initialize_2d_Points(_rect);
 
-  cv::solvePnP(object_3d, target_2d, cameraMatrix, distCoeffs, rvec, tvec,
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
   if (pnp_config_.draw_xyz == 1) {
-    this->draw_Coordinate(_src_img, rvec, tvec, cameraMatrix, distCoeffs);
+    this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
   }
   cv::Mat ptz =
-      this->camera_Ptz(tvec, pnp_config_.ptz_camera_x, pnp_config_.ptz_camera_y,
-                       pnp_config_.ptz_camera_z);
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
   cv::Point3f angle =
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
@@ -126,17 +126,17 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  */
 cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
                                       cv::Mat &_src_img, cv::Rect _rect) {
-  object_3d = this->initialize_3d_Points(_armor_type);
-  target_2d = this->initialize_2d_Points(_rect);
+  object_3d_ = this->initialize_3d_Points(_armor_type);
+  target_2d_ = this->initialize_2d_Points(_rect);
 
-  cv::solvePnP(object_3d, target_2d, cameraMatrix, distCoeffs, rvec, tvec,
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
   if (pnp_config_.draw_xyz == 1) {
-    this->draw_Coordinate(_src_img, rvec, tvec, cameraMatrix, distCoeffs);
+    this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
   }
   cv::Mat ptz =
-      this->camera_Ptz(tvec, pnp_config_.ptz_camera_x, pnp_config_.ptz_camera_y,
-                       pnp_config_.ptz_camera_z);
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
   cv::Point3f angle =
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
@@ -160,17 +160,17 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
                                       int _height, cv::Mat &_src_img,
                                       cv::RotatedRect _rect) {
-  object_3d = this->initialize_3d_Points(_width, _height);
-  target_2d = this->initialize_2d_Points(_rect);
+  object_3d_ = this->initialize_3d_Points(_width, _height);
+  target_2d_ = this->initialize_2d_Points(_rect);
 
-  cv::solvePnP(object_3d, target_2d, cameraMatrix, distCoeffs, rvec, tvec,
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
   if (pnp_config_.draw_xyz == 1) {
-    this->draw_Coordinate(_src_img, rvec, tvec, cameraMatrix, distCoeffs);
+    this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
   }
   cv::Mat ptz =
-      this->camera_Ptz(tvec, pnp_config_.ptz_camera_x, pnp_config_.ptz_camera_y,
-                       pnp_config_.ptz_camera_z);
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
   cv::Point3f angle =
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
@@ -194,17 +194,17 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
 cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
                                       int _height, cv::Mat &_src_img,
                                       cv::Rect _rect) {
-  object_3d = this->initialize_3d_Points(_width, _height);
-  target_2d = this->initialize_2d_Points(_rect);
+  object_3d_ = this->initialize_3d_Points(_width, _height);
+  target_2d_ = this->initialize_2d_Points(_rect);
 
-  cv::solvePnP(object_3d, target_2d, cameraMatrix, distCoeffs, rvec, tvec,
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
   if (pnp_config_.draw_xyz == 1) {
-    this->draw_Coordinate(_src_img, rvec, tvec, cameraMatrix, distCoeffs);
+    this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
   }
   cv::Mat ptz =
-      this->camera_Ptz(tvec, pnp_config_.ptz_camera_x, pnp_config_.ptz_camera_y,
-                       pnp_config_.ptz_camera_z);
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
   cv::Point3f angle =
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
@@ -226,14 +226,14 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
  */
 cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
                                       cv::RotatedRect _rect) {
-  object_3d = this->initialize_3d_Points(_armor_type);
-  target_2d = this->initialize_2d_Points(_rect);
+  object_3d_ = this->initialize_3d_Points(_armor_type);
+  target_2d_ = this->initialize_2d_Points(_rect);
 
-  cv::solvePnP(object_3d, target_2d, cameraMatrix, distCoeffs, rvec, tvec,
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
   cv::Mat ptz =
-      this->camera_Ptz(tvec, pnp_config_.ptz_camera_x, pnp_config_.ptz_camera_y,
-                       pnp_config_.ptz_camera_z);
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
   cv::Point3f angle =
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
@@ -255,14 +255,14 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  */
 cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
                                       cv::Rect _rect) {
-  object_3d = this->initialize_3d_Points(_armor_type);
-  target_2d = this->initialize_2d_Points(_rect);
+  object_3d_ = this->initialize_3d_Points(_armor_type);
+  target_2d_ = this->initialize_2d_Points(_rect);
 
-  cv::solvePnP(object_3d, target_2d, cameraMatrix, distCoeffs, rvec, tvec,
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
   cv::Mat ptz =
-      this->camera_Ptz(tvec, pnp_config_.ptz_camera_x, pnp_config_.ptz_camera_y,
-                       pnp_config_.ptz_camera_z);
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
   cv::Point3f angle =
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
@@ -285,14 +285,14 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  */
 cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
                                       int _height, cv::RotatedRect _rect) {
-  object_3d = this->initialize_3d_Points(_width, _height);
-  target_2d = this->initialize_2d_Points(_rect);
+  object_3d_ = this->initialize_3d_Points(_width, _height);
+  target_2d_ = this->initialize_2d_Points(_rect);
 
-  cv::solvePnP(object_3d, target_2d, cameraMatrix, distCoeffs, rvec, tvec,
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
   cv::Mat ptz =
-      this->camera_Ptz(tvec, pnp_config_.ptz_camera_x, pnp_config_.ptz_camera_y,
-                       pnp_config_.ptz_camera_z);
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
   cv::Point3f angle =
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
@@ -315,14 +315,14 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
  */
 cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
                                       int _height, cv::Rect _rect) {
-  object_3d = this->initialize_3d_Points(_width, _height);
-  target_2d = this->initialize_2d_Points(_rect);
+  object_3d_ = this->initialize_3d_Points(_width, _height);
+  target_2d_ = this->initialize_2d_Points(_rect);
 
-  cv::solvePnP(object_3d, target_2d, cameraMatrix, distCoeffs, rvec, tvec,
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
   cv::Mat ptz =
-      this->camera_Ptz(tvec, pnp_config_.ptz_camera_x, pnp_config_.ptz_camera_y,
-                       pnp_config_.ptz_camera_z);
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
   cv::Point3f angle =
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);

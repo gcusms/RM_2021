@@ -17,7 +17,7 @@
 - 返回参数 Point3f angle
 
 ```C++
-angle.x = yaw;
-angle.y = pitch;
-angle.z = depth;
+yaw = angle.x;
+pitch = angle.y;
+depth = angle.z;
 ```
