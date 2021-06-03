@@ -332,4 +332,5 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
 
   return angle;
 }
+
 Rm_Solvepnp::~Rm_Solvepnp() {}

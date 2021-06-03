@@ -3,7 +3,7 @@
 
 #include "rm_solvepnp/abstract_solvepnp.hpp"
 
-class Rm_Solvepnp : public Abstract_Solvepnp_ {
+class Rm_Solvepnp : public Abstract_Solvepnp {
  private:
   cv::Mat cameraMatrix_, distCoeffs_;
   cv::Mat rvec_ = cv::Mat::zeros(3, 3, CV_64FC1);

@@ -2,10 +2,10 @@
 
 ## 如何调用函数
 
-- 声明一个类型 Rm_Solvepnp
+- 初始化类型 Rm_Solvepnp
 - 例如 Rm_Solvepnp pnp("\_camera_path", "\_pnp_config_path")
 - 调用其中的 run_Solvepnp()函数
-- 参数主要分为
+- 参数说明
 
 ```C++
   _ballet_speed 当前子弹速度

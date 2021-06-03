@@ -11,11 +11,11 @@
  * @param _barrel_ptz_offset_y 云台与枪管的Y轴偏移
  * @return cv::Point3f
  */
-cv::Point3f Abstract_Solvepnp_::get_Angle(const cv::Mat &_pos_in_ptz,
-                                          const int _bullet_speed,
-                                          const int _company,
-                                          const float _barrel_ptz_offset_x,
-                                          const float _barrel_ptz_offset_y) {
+cv::Point3f Abstract_Solvepnp::get_Angle(const cv::Mat &_pos_in_ptz,
+                                         const int _bullet_speed,
+                                         const int _company,
+                                         const float _barrel_ptz_offset_x,
+                                         const float _barrel_ptz_offset_y) {
   cv::Point3f angle;
   //计算子弹下坠补偿时间
   const double *_xyz = (const double *)_pos_in_ptz.data;
@@ -87,8 +87,8 @@ cv::Point3f Abstract_Solvepnp_::get_Angle(const cv::Mat &_pos_in_ptz,
  * 1000 m
  * @return float
  */
-float Abstract_Solvepnp_::get_Pitch(float _dist, float _tvec_y,
-                                    float _ballet_speed, const int _company) {
+float Abstract_Solvepnp::get_Pitch(float _dist, float _tvec_y,
+                                   float _ballet_speed, const int _company) {
   _dist /= _company;
   _tvec_y /= _company;
   _ballet_speed /= _company;
@@ -125,9 +125,9 @@ float Abstract_Solvepnp_::get_Pitch(float _dist, float _tvec_y,
  * @param _cameraMatrix 相机内参
  * @param _distcoeffs 畸变矩阵
  */
-void Abstract_Solvepnp_::draw_Coordinate(cv::Mat &_draw_img, cv::Mat &_rvec,
-                                         cv::Mat &_tvec, cv::Mat &_cameraMatrix,
-                                         cv::Mat &_distcoeffs) {
+void Abstract_Solvepnp::draw_Coordinate(cv::Mat &_draw_img, cv::Mat &_rvec,
+                                        cv::Mat &_tvec, cv::Mat &_cameraMatrix,
+                                        cv::Mat &_distcoeffs) {
   std::vector<cv::Point2f> reference_Img;
   std::vector<cv::Point3f> reference_Obj;
 
@@ -161,9 +161,9 @@ void Abstract_Solvepnp_::draw_Coordinate(cv::Mat &_draw_img, cv::Mat &_rvec,
  *
  * @return cv::Mat
  */
-cv::Mat Abstract_Solvepnp_::camera_Ptz(cv::Mat &_t, double _ptz_camera_x,
-                                       double _ptz_camera_y,
-                                       double _ptz_camera_z) {
+cv::Mat Abstract_Solvepnp::camera_Ptz(cv::Mat &_t, double _ptz_camera_x,
+                                      double _ptz_camera_y,
+                                      double _ptz_camera_z) {
   //设相机坐标系绕X轴你是逆时针旋转θ后与云台坐标系的各个轴向平行
   double theta = 0;
   double r_data[] = {1,          0, 0,           0,         cos(theta),
@@ -189,7 +189,7 @@ cv::Mat Abstract_Solvepnp_::camera_Ptz(cv::Mat &_t, double _ptz_camera_x,
  * @param _rect
  * @return cv::RotatedRect
  */
-cv::RotatedRect Abstract_Solvepnp_::rect_Change_Rotatedrect(cv::Rect _rect) {
+cv::RotatedRect Abstract_Solvepnp::rect_Change_Rotatedrect(cv::Rect _rect) {
   cv::RotatedRect box =
       cv::RotatedRect((_rect.tl() + _rect.br()) / 2,
                       cv::Size(_rect.width / 2, _rect.height / 2), 0);
@@ -202,7 +202,7 @@ cv::RotatedRect Abstract_Solvepnp_::rect_Change_Rotatedrect(cv::Rect _rect) {
  * @param _rect 传入矩形
  * @return std::vector<cv::Point2f>
  */
-std::vector<cv::Point2f> Abstract_Solvepnp_::initialize_2d_Points(
+std::vector<cv::Point2f> Abstract_Solvepnp::initialize_2d_Points(
     cv::Rect _rect) {
   cv::RotatedRect box = this->rect_Change_Rotatedrect(_rect);
   return this->initialize_2d_Points(box);
@@ -214,7 +214,7 @@ std::vector<cv::Point2f> Abstract_Solvepnp_::initialize_2d_Points(
  * @param _rect 传入旋转矩形
  * @return std::vector<cv::Point2f>
  */
-std::vector<cv::Point2f> Abstract_Solvepnp_::initialize_2d_Points(
+std::vector<cv::Point2f> Abstract_Solvepnp::initialize_2d_Points(
     cv::RotatedRect _rect) {
   std::vector<cv::Point2f> target2d;
   static cv::Point2f vertex[4];
@@ -258,7 +258,7 @@ std::vector<cv::Point2f> Abstract_Solvepnp_::initialize_2d_Points(
  * 2 大神符
  * @return std::vector<cv::Point3f>
  */
-std::vector<cv::Point3f> Abstract_Solvepnp_::initialize_3d_Points(
+std::vector<cv::Point3f> Abstract_Solvepnp::initialize_3d_Points(
     int _armor_type = 0) {
   std::vector<cv::Point3f> object_3d;
   float half_x;
@@ -299,8 +299,8 @@ std::vector<cv::Point3f> Abstract_Solvepnp_::initialize_3d_Points(
  * @param _heigth     实际高度
  * @return std::vector<cv::Point3f>
  */
-std::vector<cv::Point3f> Abstract_Solvepnp_::initialize_3d_Points(int _width,
-                                                                  int _heigth) {
+std::vector<cv::Point3f> Abstract_Solvepnp::initialize_3d_Points(int _width,
+                                                                 int _heigth) {
   std::vector<cv::Point3f> object_3d;
   float half_x = _width * 0.5;
   float half_y = _heigth * 0.5;
