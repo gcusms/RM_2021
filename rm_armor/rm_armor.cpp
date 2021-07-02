@@ -180,6 +180,7 @@ bool comparison(Armor_Data _a, Armor_Data _b) {
  * @param armor_ 装甲板数据
  */
 void RM_ArmorDetector::final_Armor() {
+  armor_success = true;
   if (armor_.size() == 1) {
     std::cout << "只有一个装甲板" << std::endl;
   } else {
@@ -481,7 +482,6 @@ cv::Mat RM_ArmorDetector::bgr_Pretreat(cv::Mat &_src_img, const int _my_color) {
   static cv::Mat bin_color_img;
   switch (_my_color) {
     case 0:
-
       cv::subtract(_split[0], _split[2], bin_color_img);  // r - b
       if (image_config_.color_edit) {
         cv::namedWindow("color_trackbar");

@@ -125,7 +125,7 @@ class SerialPort {
   Serial_Cfg serial_config_;
   Receive_Data receive_data_;
   Receive_Data last_receive_data_;
-
+  Write_Data write_data_;
   //串口标志量
   int fd;
   int transform_arr_[4];
@@ -201,7 +201,9 @@ class SerialPort {
   void rmSerialWrite(const int& _yaw, const int16_t& yaw, const int& _pitch,
                      const int16_t& pitch, const int16_t& depth,
                      const int& data_type = 0, const int& is_shooting = 0);
-  void rmSerialWrite(Write_Data _write_data);
+  void rmSerialWrite();
+  void updataWriteData(const float _yaw, const float _pitch, const int _depth,
+                       const int _data_type = 0, const int _is_shooting = 0);
   //接收并处理串口数据
   void rmReceiveData();
   //判断是否接受到数据

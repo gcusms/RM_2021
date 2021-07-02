@@ -6,7 +6,7 @@
  * @date 2019-05-06
  * @copyright Copyright (c) 2019 GCU Robot Lab. All Rights Reserved.
  */
-#include "camera/rm_video_capture.h"
+#include "camera/rm_video_capture.hpp"
 
 namespace mv_camera {
 

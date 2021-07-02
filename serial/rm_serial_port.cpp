@@ -1,4 +1,4 @@
-#include "rm_serial_port.h"
+#include "rm_serial_port.hpp"
 
 const unsigned char CRC8Tab[300] = {
     0,   94,  188, 226, 97,  63,  221, 131, 194, 156, 126, 32,  163, 253, 31,
@@ -207,17 +207,34 @@ void SerialPort::rmSerialWrite(const int& _yaw, const int16_t& yaw,
     depth_reduction_ = 0x0000;
   }
 }
-
-void SerialPort::rmSerialWrite(Write_Data _write_data) {
-  getDataForCrc(_write_data.data_type, _write_data.is_shooting,
-                _write_data.symbol_yaw, _write_data.yaw_angle,
-                _write_data.symbol_pitch, _write_data.pitch_angle,
-                _write_data.depth);
+void SerialPort::updataWriteData(const float _yaw, const float _pitch,
+                                 const int _depth, const int _data_type,
+                                 const int _is_shooting) {
+  write_data_.symbol_yaw = 0;
+  if (_yaw >= 0) {
+    write_data_.symbol_yaw = 1;
+  }
+  write_data_.symbol_pitch = 0;
+  if (_pitch >= 0) {
+    write_data_.symbol_pitch = 1;
+  }
+  write_data_.yaw_angle = fabs(_yaw);
+  write_data_.pitch_angle = fabs(_pitch);
+  write_data_.depth = _depth;
+  write_data_.data_type = _data_type;
+  write_data_.is_shooting = _is_shooting;
+  rmSerialWrite();
+}
+void SerialPort::rmSerialWrite() {
+  getDataForCrc(write_data_.data_type, write_data_.is_shooting,
+                write_data_.symbol_yaw, write_data_.yaw_angle,
+                write_data_.symbol_pitch, write_data_.pitch_angle,
+                write_data_.depth);
   uint8_t CRC = checksumCrc(crc_buff_, sizeof(crc_buff_));
-  getDataForSend(_write_data.data_type, _write_data.is_shooting,
-                 _write_data.symbol_yaw, _write_data.yaw_angle,
-                 _write_data.symbol_pitch, _write_data.pitch_angle,
-                 _write_data.depth, CRC);
+  getDataForSend(write_data_.data_type, write_data_.is_shooting,
+                 write_data_.symbol_yaw, write_data_.yaw_angle,
+                 write_data_.symbol_pitch, write_data_.pitch_angle,
+                 write_data_.depth, CRC);
   write(fd, write_buff_, sizeof(write_buff_));
   if (serial_config_.show_serial_information == 1) {
     yaw_reduction_ = mergeIntoBytes(

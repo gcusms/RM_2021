@@ -91,9 +91,8 @@ Rm_Solvepnp::Rm_Solvepnp() {}
  * @param _rect 目标旋转矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
-                                      cv::Mat &_src_img,
-                                      cv::RotatedRect _rect) {
+void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+                               cv::Mat &_src_img, cv::RotatedRect _rect) {
   object_3d_ = this->initialize_3d_Points(_armor_type);
   target_2d_ = this->initialize_2d_Points(_rect);
 
@@ -109,10 +108,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
 
-  angle.y += pnp_config_.offset_armor_pitch;
-  angle.x += pnp_config_.offset_armor_yaw;
-
-  return angle;
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
 }
 
 /**
@@ -122,10 +120,10 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  * @param _armor_type 装甲板类型
  * @param _src_img 原图像
  * @param _rect 目标外接矩形
- * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
+ * @return void yaw pitch偏移量 和 目标depth信息
  */
-cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
-                                      cv::Mat &_src_img, cv::Rect _rect) {
+void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+                               cv::Mat &_src_img, cv::Rect _rect) {
   object_3d_ = this->initialize_3d_Points(_armor_type);
   target_2d_ = this->initialize_2d_Points(_rect);
 
@@ -141,10 +139,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
 
-  angle.y += pnp_config_.offset_armor_pitch;
-  angle.x += pnp_config_.offset_armor_yaw;
-
-  return angle;
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
 }
 
 /**
@@ -155,11 +152,10 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  * @param _height 目标实际高度
  * @param _src_img 原图像
  * @param _rect 目标外接矩形
- * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
+ * @return void yaw pitch偏移量 和 目标depth信息
  */
-cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
-                                      int _height, cv::Mat &_src_img,
-                                      cv::RotatedRect _rect) {
+void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
+                               cv::Mat &_src_img, cv::RotatedRect _rect) {
   object_3d_ = this->initialize_3d_Points(_width, _height);
   target_2d_ = this->initialize_2d_Points(_rect);
 
@@ -175,10 +171,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
 
-  angle.y += pnp_config_.offset_armor_pitch;
-  angle.x += pnp_config_.offset_armor_yaw;
-
-  return angle;
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
 }
 
 /**
@@ -191,9 +186,8 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
  * @param _rect 目标外接矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
-                                      int _height, cv::Mat &_src_img,
-                                      cv::Rect _rect) {
+void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
+                               cv::Mat &_src_img, cv::Rect _rect) {
   object_3d_ = this->initialize_3d_Points(_width, _height);
   target_2d_ = this->initialize_2d_Points(_rect);
 
@@ -209,10 +203,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
 
-  angle.y += pnp_config_.offset_armor_pitch;
-  angle.x += pnp_config_.offset_armor_yaw;
-
-  return angle;
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
 }
 
 /**
@@ -224,8 +217,8 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
  * @param _rect 目标旋转矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
-                                      cv::RotatedRect _rect) {
+void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+                               cv::RotatedRect _rect) {
   object_3d_ = this->initialize_3d_Points(_armor_type);
   target_2d_ = this->initialize_2d_Points(_rect);
 
@@ -238,10 +231,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
 
-  angle.y += pnp_config_.offset_armor_pitch;
-  angle.x += pnp_config_.offset_armor_yaw;
-
-  return angle;
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
 }
 
 /**
@@ -253,8 +245,8 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  * @param _rect 目标外接矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
-                                      cv::Rect _rect) {
+void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+                               cv::Rect _rect) {
   object_3d_ = this->initialize_3d_Points(_armor_type);
   target_2d_ = this->initialize_2d_Points(_rect);
 
@@ -267,10 +259,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
 
-  angle.y += pnp_config_.offset_armor_pitch;
-  angle.x += pnp_config_.offset_armor_yaw;
-
-  return angle;
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
 }
 
 /**
@@ -283,8 +274,8 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  * @param _rect 目标外接矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
-                                      int _height, cv::RotatedRect _rect) {
+void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
+                               cv::RotatedRect _rect) {
   object_3d_ = this->initialize_3d_Points(_width, _height);
   target_2d_ = this->initialize_2d_Points(_rect);
 
@@ -297,10 +288,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
 
-  angle.y += pnp_config_.offset_armor_pitch;
-  angle.x += pnp_config_.offset_armor_yaw;
-
-  return angle;
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
 }
 
 /**
@@ -313,8 +303,8 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
  * @param _rect 目标外接矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
-                                      int _height, cv::Rect _rect) {
+void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
+                               cv::Rect _rect) {
   object_3d_ = this->initialize_3d_Points(_width, _height);
   target_2d_ = this->initialize_2d_Points(_rect);
 
@@ -327,10 +317,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
       this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
                       pnp_config_.barrel_ptz_offset_y);
 
-  angle.y += pnp_config_.offset_armor_pitch;
-  angle.x += pnp_config_.offset_armor_yaw;
-
-  return angle;
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
 }
 
 Rm_Solvepnp::~Rm_Solvepnp() {}

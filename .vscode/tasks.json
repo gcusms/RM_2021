@@ -22,6 +22,7 @@
 			"-I","${workspaceFolder}/serial",
 			"-I","${workspaceFolder}/camera",
 			"-I","${workspaceFolder}/roi",
+			"-I","${workspaceFolder}/base",
 			"-I","/usr/local/include",
 			"-I","/usr/local/include/opencv4",
 			"-I","/usr/local/include/opencv4/opencv2",
@@ -33,6 +34,7 @@
 			"${workspaceFolder}/serial/rm_serial_port.cpp",
 			"${workspaceFolder}/camera/rm_video_capture.cpp",
 			"${workspaceFolder}/roi/rm_roi.cpp",
+			"${workspaceFolder}/base/connector.cpp",
 			"${workspaceFolder}/main.cpp",/* ${workspaceFolder}表⽰路径从当前项⽬⽂件夹开始 */
 			"-o", /* 编译输出⽂件的存放路径 */
 			"${workspaceFolder}/run.o", /* 要与launch.json⽂件⾥的program的内容保持⼀致 */

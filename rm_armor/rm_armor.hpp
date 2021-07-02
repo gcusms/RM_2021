@@ -101,6 +101,7 @@ class RM_ArmorDetector {
   RM_ArmorDetector() {}
   RM_ArmorDetector(std::string _armor_config);
   ~RM_ArmorDetector() {}
+  inline bool returnSuccessArmor() { return armor_success; }
 
  private:
   Armor_Cfg armor_config_;
