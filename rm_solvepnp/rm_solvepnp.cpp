@@ -99,9 +99,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  if (pnp_config_.draw_xyz == 1) {
-    this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
-  }
+
+  this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
+
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
@@ -131,9 +131,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  if (pnp_config_.draw_xyz == 1) {
-    this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
-  }
+
+  this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
+
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
@@ -165,9 +165,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  if (pnp_config_.draw_xyz == 1) {
-    this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
-  }
+
+  this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
+
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
@@ -199,9 +199,9 @@ cv::Point3f Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  if (pnp_config_.draw_xyz == 1) {
-    this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
-  }
+
+  this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
+
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);

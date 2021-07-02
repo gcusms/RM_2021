@@ -10,7 +10,7 @@
 ```C++
   _ballet_speed 当前子弹速度
   _armor_type 装甲板类型 | _width _height 实际宽和高单位为(mm）
-  _src_img 原图像 //可有可无
+  _src_img 原图像 //输入src_img 则绘制坐标系
   _rect 旋转矩形 | 外接矩形
 ```
 

@@ -11,8 +11,7 @@ class Rm_Solvepnp : public Abstract_Solvepnp {
   std::vector<cv::Point2f> target_2d_;
   std::vector<cv::Point3f> object_3d_;
 
-  Solvepnp_Cfg pnp_config_;
-
+ 
  public:
   Rm_Solvepnp(std::string _camera_path, std::string _pnp_config_path);
   Rm_Solvepnp();

@@ -43,9 +43,32 @@ enum ARMOR {
 class Abstract_Solvepnp {
  private:
   cv::Mat pnp_config_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
+  std::vector<cv::Point3f> reference_Obj_;
+  double theta = 0.0;
+  double r_data[9];
+  double t_data[3];
+  cv::Mat r_camera_ptz;
+  cv::Mat t_camera_ptz;
 
  public:
-  Abstract_Solvepnp() = default;
+  Solvepnp_Cfg pnp_config_;
+  Abstract_Solvepnp() {
+    reference_Obj_.push_back(cv::Point3f(0.0, 0.0, 0.0));
+    reference_Obj_.push_back(cv::Point3f(100, 0.0, 0.0));
+    reference_Obj_.push_back(cv::Point3f(0.0, 100, 0.0));
+    reference_Obj_.push_back(cv::Point3f(0.0, 0.0, 100));
+    //设相机坐标系绕X轴你是逆时针旋转θ后与云台坐标系的各个轴向平行
+    static double theta = 0;
+    static double r_data[] = {1,          0, 0,           0,         cos(theta),
+                              sin(theta), 0, -sin(theta), cos(theta)};
+    //设相机坐标系的原点在云台坐标系中的坐标为(x0,y0,z0)
+    static double t_data[] = {static_cast<double>(pnp_config_.ptz_camera_x),
+                              static_cast<double>(pnp_config_.ptz_camera_y),
+                              static_cast<double>(pnp_config_.ptz_camera_z)};
+
+    r_camera_ptz = cv::Mat(3, 3, CV_64FC1, r_data);
+    t_camera_ptz = cv::Mat(3, 1, CV_64FC1, t_data);
+  }
   ~Abstract_Solvepnp() = default;
   /**
    * @brief 初始化3d点
@@ -184,21 +207,7 @@ class Abstract_Solvepnp {
    */
   cv::Mat camera_Ptz(cv::Mat &_t, double _ptz_camera_x, double _ptz_camera_y,
                      double _ptz_camera_z) {
-    //设相机坐标系绕X轴你是逆时针旋转θ后与云台坐标系的各个轴向平行
-    double theta = 0;
-    double r_data[] = {1,          0, 0,           0,         cos(theta),
-                       sin(theta), 0, -sin(theta), cos(theta)};
-    //设相机坐标系的原点在云台坐标系中的坐标为(x0,y0,z0)
-    double t_data[] = {static_cast<double>(_ptz_camera_x),
-                       static_cast<double>(_ptz_camera_y),
-                       static_cast<double>(_ptz_camera_z)};
-
-    cv::Mat r_camera_ptz(3, 3, CV_64FC1, r_data);
-    cv::Mat t_camera_ptz(3, 1, CV_64FC1, t_data);
     cv::Mat position_in_ptz = r_camera_ptz * _t - t_camera_ptz;
-
-    // cout << position_in_ptz << endl;
-    t_camera_ptz.release();
 
     return position_in_ptz;
   }
@@ -214,14 +223,8 @@ class Abstract_Solvepnp {
   void draw_Coordinate(cv::Mat &_draw_img, cv::Mat &_rvec, cv::Mat &_tvec,
                        cv::Mat &_cameraMatrix, cv::Mat &_distcoeffs) {
     std::vector<cv::Point2f> reference_Img;
-    std::vector<cv::Point3f> reference_Obj;
 
-    reference_Obj.push_back(cv::Point3f(0.0, 0.0, 0.0));
-    reference_Obj.push_back(cv::Point3f(100, 0.0, 0.0));
-    reference_Obj.push_back(cv::Point3f(0.0, 100, 0.0));
-    reference_Obj.push_back(cv::Point3f(0.0, 0.0, 100));
-
-    cv::projectPoints(reference_Obj, _rvec, _tvec, _cameraMatrix, _distcoeffs,
+    cv::projectPoints(reference_Obj_, _rvec, _tvec, _cameraMatrix, _distcoeffs,
                       reference_Img);
 
     cv::line(_draw_img, reference_Img[0], reference_Img[1],
@@ -230,7 +233,7 @@ class Abstract_Solvepnp {
              cv::Scalar(0, 255, 0), 2);
     cv::line(_draw_img, reference_Img[0], reference_Img[3],
              cv::Scalar(255, 0, 0), 2);
-    imshow("draw", _draw_img);
+    imshow("pnp_draw", _draw_img);
   }
   /**
    * @brief pitch 重力补偿 统一mm传入
