@@ -114,6 +114,10 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
+    object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -145,6 +149,10 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
+    object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -177,6 +185,10 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
+    object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -209,6 +221,11 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
+  object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+  
 }
 
 /**
@@ -237,6 +254,10 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
+  object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -265,6 +286,10 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
+    object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -294,6 +319,10 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
+    object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -323,6 +352,10 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
+    object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 RM_Solvepnp::~RM_Solvepnp() {}

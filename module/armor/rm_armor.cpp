@@ -149,18 +149,20 @@ bool RM_ArmorDetector::find_Light() {
 bool RM_ArmorDetector::run_Armor(cv::Mat &_src_img, int _my_color) {
   //图像处理
   run_Image(_src_img, _my_color);
-  draw_img_ = _src_img.clone();
+  draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   if (find_Light()) {
     if (fitting_Armor()) {
       final_Armor();
-      if (armor_config_.armor_edit == 1) {
+      if (armor_config_.armor_edit == 1|| light_config_.light_edit == 1) {
         imshow("armor_draw", draw_img_);
+        draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
       }
       return true;
     }
   }
   if (armor_config_.armor_edit == 1) {
     imshow("armor_draw", draw_img_);
+    draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
   return false;
 }
@@ -236,11 +238,11 @@ bool RM_ArmorDetector::fitting_Armor() {
         if (this->light_Judge(light_left, light_right)) {
           if (this->average_Color() < 20) {
             armor_.push_back(armor_data_);
-            if (armor_config_.armor_edit == 1) {
-              //绘制所有装甲板
-              rectangle(draw_img_, armor_data_.armor_rect.boundingRect(),
-                        cv::Scalar(255, 255, 0), 5, 8);
-            }
+            // if (armor_config_.armor_edit == 1) {
+            //   //绘制所有装甲板
+            //   rectangle(draw_img_, armor_data_.armor_rect.boundingRect(),
+            //             cv::Scalar(255, 255, 0), 5, 8);
+            // }
           }
         }
       }
@@ -364,14 +366,18 @@ bool RM_ArmorDetector::light_Judge(int i, int j) {
  * @return int 返回平均强度
  */
 int RM_ArmorDetector::average_Color() {
+  armor_data_.left_light_height = MAX(armor_data_.left_light_height,  armor_data_.left_light_width);
+  armor_data_.left_light_width = MIN(armor_data_.left_light_height, armor_data_.left_light_width);
+  armor_data_.right_light_height = MAX(armor_data_.right_light_height,  armor_data_.right_light_width);
+  armor_data_.right_light_width = MIN(armor_data_.right_light_height, armor_data_.right_light_width);
   cv::RotatedRect rects = cv::RotatedRect(
       (armor_data_.left_light.center + armor_data_.right_light.center) / 2,
       cv::Size(
           armor_data_.width -
-              (armor_data_.left_light_width + armor_data_.right_light_width) /
-                  2,
+              (armor_data_.left_light_width + armor_data_.right_light_width) ,
           (armor_data_.left_light_height + armor_data_.right_light_height) / 2),
       armor_data_.tan_angle);
+  cv::rectangle(draw_img_, rects.boundingRect(), cv::Scalar(0, 0, 255), 3, 8);
   armor_data_.armor_rect = rects;  //储存装甲板旋转矩形
   cv::Rect _rect = rects.boundingRect();
   if (_rect.x <= 0) {
@@ -388,7 +394,6 @@ int RM_ArmorDetector::average_Color() {
   }
   static cv::Mat roi = bin_gray_img(_rect);
   int average_intensity = static_cast<int>(mean(roi).val[0]);
-
   return average_intensity;
 }
 

@@ -32,7 +32,7 @@ class RM_Solvepnp : public Abstract_Solvepnp {
   inline float returnYawAngle() { return solvepnp_info_.yaw_angle; }
   inline float returnPitchAngle() { return solvepnp_info_.pitch_angle; }
   inline float returnDepth() { return solvepnp_info_.depth; }
-
+   
   void run_Solvepnp(int _ballet_speed, int _armor_type, cv::Mat &_src_img,
                     cv::RotatedRect _rect);
 

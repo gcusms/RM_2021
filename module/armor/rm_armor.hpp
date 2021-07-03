@@ -96,6 +96,7 @@ class RM_ArmorDetector {
   int motion_Direction();          //判断装甲板运动方向
   cv::RotatedRect return_Final_Armor_RotatedRect(int _num);
   int return_Final_Armor_Distinguish(int _num);
+  int return_Armor_num(){return armor_.size();};
   RM_ArmorDetector() {}
   RM_ArmorDetector(std::string _armor_config);
   ~RM_ArmorDetector() {}

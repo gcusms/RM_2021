@@ -8,7 +8,7 @@
   * 10 B921600
   */
 -->
-<SET_BANDRATE>1</SET_BANDRATE>
+<SET_BANDRATE>10</SET_BANDRATE>
 <!--
 /**
   * @brief 打印串口数据

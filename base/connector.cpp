@@ -6,7 +6,7 @@ Connector::~Connector() {}
 
 void Connector::run() {
   mv_camera::RM_VideoCapture mv_capture_(mv_camera::CameraParam(
-      0, mv_camera::RESOLUTION_1280_X_1024, mv_camera::EXPOSURE_400));
+      0, mv_camera::RESOLUTION_1280_X_800, mv_camera::EXPOSURE_600));
   angle_solve::RM_Solvepnp pnp_(
       "devices/camera/cameraParams/cameraParams_407.xml",
       "module/angle_solve/pnp_config.xml");
@@ -17,16 +17,15 @@ void Connector::run() {
       src_img_ = mv_capture_.image();
     }
     if (!src_img_.empty()) {
-      serial_.updateReceiveInformation();
+      // serial_.updateReceiveInformation();
       switch (serial_.returnReceiveMode()) {
         case serial_port::SUP_SHOOT:
           if (armor_.run_Armor(src_img_, serial_.returnReceiceColor())) {
             pnp_.run_Solvepnp(serial_.returnReceiveBulletVolacity(),
                               armor_.return_Final_Armor_Distinguish(0),
                               armor_.return_Final_Armor_RotatedRect(0));
-          } else {
-            armor_.free_Memory();
           }
+          
           break;
         case serial_port::ENERGY_AGENCY:
           break;
@@ -36,36 +35,35 @@ void Connector::run() {
             pnp_.run_Solvepnp(serial_.returnReceiveBulletVolacity(),
                               armor_.return_Final_Armor_Distinguish(0),
                               armor_.return_Final_Armor_RotatedRect(0));
-          } else {
-            armor_.free_Memory();
-          }
+          } 
+          
           break;
         case serial_port::BASE_MODE:
           if (armor_.run_Armor(src_img_, serial_.returnReceiceColor())) {
             pnp_.run_Solvepnp(serial_.returnReceiveBulletVolacity(),
                               armor_.return_Final_Armor_Distinguish(0),
                               armor_.return_Final_Armor_RotatedRect(0));
-          } else {
-            armor_.free_Memory();
-          }
+          } 
+          
           break;
         default:
           if (armor_.run_Armor(src_img_, serial_.returnReceiceColor())) {
             pnp_.run_Solvepnp(serial_.returnReceiveBulletVolacity(),
                               armor_.return_Final_Armor_Distinguish(0),
                               armor_.return_Final_Armor_RotatedRect(0));
-          } else {
-            armor_.free_Memory();
-          }
+          } 
+          
           break;
       }
       serial_.updataWriteData(pnp_.returnYawAngle(), pnp_.returnPitchAngle(),
-                              pnp_.returnDepth(), armor_.returnSuccessArmor(),
+                              pnp_.returnDepth(), armor_.return_Armor_num(),
                               0);
       mv_capture_.cameraReleasebuff();
-      if (cv::waitKey(1) == 'q') {
-        return;
-      }
+      armor_.free_Memory();
+      usleep(1);
+      // if (cv::waitKey(1) == 'q') {
+      //   return;
+      // }
     }
   }
 }

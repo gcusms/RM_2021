@@ -205,7 +205,7 @@ class SerialPort {
                      const int& data_type = 0, const int& is_shooting = 0);
   void rmSerialWrite();
   void updataWriteData(const float _yaw, const float _pitch, const int _depth,
-                       const int _data_type = 0, const int _is_shooting = 0);
+                        int _data_type = 0, const int _is_shooting = 0);
   //接收并处理串口数据
   void rmReceiveData();
   //判断是否接受到数据
