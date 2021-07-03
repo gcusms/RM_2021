@@ -60,8 +60,8 @@ enum Robot_ID {
     */
 };
 typedef struct Serial_Config {
-  int set_bandrate = 1;
-  int show_serial_information = 1;
+  int set_bandrate = 0;
+  int show_serial_information = 0;
 
 } Serial_Cfg;
 /**

@@ -40,9 +40,11 @@ const unsigned char CRC8Tab[300] = {
 SerialPort::SerialPort(std::string _serial_config) {
   // 更新串口部分的控制开关
   cv::FileStorage fs_serial(_serial_config, cv::FileStorage::READ);
+
   fs_serial["SET_BANDRATE"] >> serial_config_.set_bandrate;
   fs_serial["SHOW_SERIAL_INFORMATION"] >>
       serial_config_.show_serial_information;
+
   std::cout << "The Serial set ......" << std::endl;
   const char* DeviceName[4] = {"", "/dev/ttyUSB0", "/dev/ttyUSB1",
                                "/dev/ttyUSB2"};
@@ -459,4 +461,4 @@ void SerialPort::updateReceiveInformation() {
                                  this->receive_buff_[13]) /
       100.f;
 }
-}
+}  // namespace serial_port

@@ -8,12 +8,10 @@ void Connector::run() {
   mv_camera::RM_VideoCapture mv_capture_(mv_camera::CameraParam(
       0, mv_camera::RESOLUTION_1280_X_1024, mv_camera::EXPOSURE_400));
   angle_solve::RM_Solvepnp pnp_(
-      "/home/xx/workspace/RM_code-1/RM_2020_vision_code/Basis/RM_VideoCapture/"
-      "cameraParams/cameraParams_554.xml",
-      "rm_solvepnp/pnp_config.xml");
-  armor::RM_ArmorDetector armor_("rm_armor/armor_config.xml");
-  serial_port::SerialPort serial_(
-      "/home/xx/桌面/tmp/p4p/serial/serial_config.xml");
+      "devices/camera/cameraParams/cameraParams_407.xml",
+      "module/angle_solve/pnp_config.xml");
+  armor::RM_ArmorDetector armor_("module/armor/armor_config.xml");
+  serial_port::SerialPort serial_("devices/serial/serial_config.xml");
   while (true) {
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
