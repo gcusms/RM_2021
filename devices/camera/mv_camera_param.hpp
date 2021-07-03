@@ -2,6 +2,7 @@
 #define CAMERA_PARAM_H_
 
 namespace mv_camera {
+
 enum EXPOSURETIME {
   /**
    * @brief 预设值曝光时间

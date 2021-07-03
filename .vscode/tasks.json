@@ -17,11 +17,11 @@
 
 			/* 说明整个项⽬所需的头⽂件路径（.h）*/
 			"-I","${workspaceFolder}/",
-			"-I","${workspaceFolder}/rm_solvepnp",
-			"-I","${workspaceFolder}/rm_armor",
-			"-I","${workspaceFolder}/serial",
-			"-I","${workspaceFolder}/camera",
-			"-I","${workspaceFolder}/roi",
+			"-I","${workspaceFolder}/module/angle_solve",
+			"-I","${workspaceFolder}/module/armor",
+			"-I","${workspaceFolder}/devices/serial",
+			"-I","${workspaceFolder}/devices/camera",
+			"-I","${workspaceFolder}/module/roi",
 			"-I","${workspaceFolder}/base",
 			"-I","/usr/local/include",
 			"-I","/usr/local/include/opencv4",
@@ -29,13 +29,13 @@
 			"-L","/usr/local/lib",
 			/* 说明整个项⽬所需的源⽂件路径(.cpp) */
 			"-g",
-			"${workspaceFolder}/rm_solvepnp/rm_solvepnp.cpp",
-			"${workspaceFolder}/rm_armor/rm_armor.cpp",
-			"${workspaceFolder}/serial/rm_serial_port.cpp",
-			"${workspaceFolder}/camera/rm_video_capture.cpp",
-			"${workspaceFolder}/roi/rm_roi.cpp",
+			"${workspaceFolder}/module/angle_solve/rm_solve_pnp.cpp",
+			"${workspaceFolder}/module/armor/rm_armor.cpp",
+			"${workspaceFolder}/devices/serial/rm_serial_port.cpp",
+			"${workspaceFolder}/devices/camera/rm_video_capture.cpp",
+			"${workspaceFolder}/module/roi/rm_roi.cpp",
 			"${workspaceFolder}/base/connector.cpp",
-			"${workspaceFolder}/main.cpp",/* ${workspaceFolder}表⽰路径从当前项⽬⽂件夹开始 */
+			"${workspaceFolder}/user/main.cpp",/* ${workspaceFolder}表⽰路径从当前项⽬⽂件夹开始 */
 			"-o", /* 编译输出⽂件的存放路径 */
 			"${workspaceFolder}/run.o", /* 要与launch.json⽂件⾥的program的内容保持⼀致 */
 			/* ${fileDirname} 是指 ⽂件⽬录名 相当于${workspaceFolder}*/

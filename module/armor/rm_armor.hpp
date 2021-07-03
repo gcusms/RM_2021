@@ -1,17 +1,15 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
-using namespace cv;
-using namespace std;
-
+namespace armor {
 struct Armor_Data {
-  RotatedRect armor_rect;   ///
-  float width = 0;          ///装甲板宽度
-  float height = 0;         ///装甲板高度
-  float aspect_ratio = 0;   ///装甲板宽高比
-  float tan_angle = 0;      ///
-  RotatedRect left_light;   ///
-  RotatedRect right_light;  ///
+  cv::RotatedRect armor_rect;   ///
+  float width = 0;              ///装甲板宽度
+  float height = 0;             ///装甲板高度
+  float aspect_ratio = 0;       ///装甲板宽高比
+  float tan_angle = 0;          ///
+  cv::RotatedRect left_light;   ///
+  cv::RotatedRect right_light;  ///
 
   int distance_center = 0;
 
@@ -88,7 +86,7 @@ struct Image_Cfg {
 class RM_ArmorDetector {
   //装甲板
  public:
-  bool run_Armor(Mat &_src_img, int my_color);
+  bool run_Armor(cv::Mat &_src_img, int my_color);
   bool light_Judge(int i, int j);  //判断左右灯条能否组成装甲板
   int average_Color();             //计算图像颜色平均值
   bool fitting_Armor();            //拟合装甲板
@@ -96,7 +94,7 @@ class RM_ArmorDetector {
   void final_Armor();              //最优装甲板
   void free_Memory();              //释放内存
   int motion_Direction();          //判断装甲板运动方向
-  RotatedRect return_Final_Armor_RotatedRect(int _num);
+  cv::RotatedRect return_Final_Armor_RotatedRect(int _num);
   int return_Final_Armor_Distinguish(int _num);
   RM_ArmorDetector() {}
   RM_ArmorDetector(std::string _armor_config);
@@ -108,23 +106,23 @@ class RM_ArmorDetector {
   Image_Cfg image_config_;
   Light_Cfg light_config_;
 
-  Mat frame;      //原图
-  Mat draw_img_;  //画板
-  Mat gray_img_;
-  Mat hsv_img;
-  Mat bin_gray_img;
-  Mat bin_color_img;
+  cv::Mat frame;      //原图
+  cv::Mat draw_img_;  //画板
+  cv::Mat gray_img_;
+  cv::Mat hsv_img;
+  cv::Mat bin_gray_img;
+  cv::Mat bin_color_img;
   cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
 
   Armor_Data armor_data_;
 
-  vector<Armor_Data> armor_;
-  vector<RotatedRect> light_;
+  std::vector<Armor_Data> armor_;
+  std::vector<cv::RotatedRect> light_;
 
-  Rect armor_roi;
+  cv::Rect armor_roi;
 
-  Point lost_armor_center;
-  Point armor_center;  //装甲板中心点
+  cv::Point lost_armor_center;
+  cv::Point armor_center;  //装甲板中心点
 
   bool lost_armor_success = false;
   bool armor_success = false;
@@ -157,3 +155,4 @@ class RM_ArmorDetector {
 
   cv::Mat fuse_Image(cv::Mat _bin_gray_img, cv::Mat _bin_color_img);
 };
+}  // namespace armor

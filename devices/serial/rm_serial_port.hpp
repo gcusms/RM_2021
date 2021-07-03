@@ -8,6 +8,8 @@
 
 #include <iostream>
 #include <opencv2/opencv.hpp>
+
+namespace serial_port {
 /**
  * @brief 串口各个数组的长度设置
  */
@@ -211,3 +213,4 @@ class SerialPort {
   //更新串口接受数据
   void updateReceiveInformation();
 };
+}

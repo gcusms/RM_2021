@@ -4,6 +4,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
+namespace angle_solve {
 struct Solvepnp_Cfg {
   int company = 1;
 
@@ -18,7 +19,7 @@ struct Solvepnp_Cfg {
 
   float offset_armor_pitch = 0.0;
   float offset_armor_yaw = 0.0;
-};
+};  // namespace Solvepnp_Cfg
 
 /**
  * @brief 装甲板实际长度单位（mm）
@@ -348,5 +349,5 @@ class Abstract_Solvepnp {
     return angle;
   }
 };
-
+}  // namespace angle_solve
 #endif  // !

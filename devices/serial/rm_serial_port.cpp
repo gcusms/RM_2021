@@ -1,5 +1,5 @@
 #include "rm_serial_port.hpp"
-
+namespace serial_port {
 const unsigned char CRC8Tab[300] = {
     0,   94,  188, 226, 97,  63,  221, 131, 194, 156, 126, 32,  163, 253, 31,
     65,  157, 195, 33,  127, 252, 162, 64,  30,  95,  1,   227, 189, 62,  96,
@@ -458,4 +458,5 @@ void SerialPort::updateReceiveInformation() {
       SerialPort::mergeIntoBytes(this->receive_buff_[12],
                                  this->receive_buff_[13]) /
       100.f;
+}
 }

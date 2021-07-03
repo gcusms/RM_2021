@@ -1,5 +1,6 @@
 #include "rm_armor.hpp"
 
+namespace armor {
 RM_ArmorDetector::RM_ArmorDetector(std::string _armor_config) {
   cv::FileStorage fs_armor(_armor_config, cv::FileStorage::READ);
   //预处理调参开关
@@ -95,7 +96,7 @@ bool RM_ArmorDetector::find_Light() {
   cv::findContours(bin_color_img, contours, cv::RETR_EXTERNAL,
                    cv::CHAIN_APPROX_NONE);
   if (contours.size() < 2) {
-    cout << "轮廓数量小于2" << endl;
+    std::cout << "轮廓数量小于2" << std::endl;
     return false;
   }
   //筛选，去除一部分矩形
@@ -134,7 +135,7 @@ bool RM_ArmorDetector::find_Light() {
   }
   //灯条少于2 停止运行
   if (this->light_.size() < 2) {
-    cout << "灯条数量小于2" << endl;
+    std::cout << "灯条数量小于2" << std::endl;
     return false;
   }
   return true;
@@ -246,7 +247,7 @@ bool RM_ArmorDetector::fitting_Armor() {
     }
   }
   if (this->armor_.size() < 1) {
-    cout << "未找到装甲板" << endl;
+    std::cout << "未找到装甲板" << std::endl;
     return false;
   }
   return true;
@@ -580,3 +581,4 @@ cv::Mat RM_ArmorDetector::hsv_Pretreat(cv::Mat &_src_img, const int _my_color) {
 
   return bin_color_img;
 }
+}  // namespace armor

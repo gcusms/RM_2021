@@ -1,14 +1,14 @@
 #ifndef LINKER_H_
 #define LINKER_H_
 
-#include "camera/rm_video_capture.hpp"
-#include "rm_armor/rm_armor.hpp"
-#include "rm_solvepnp/rm_solvepnp.hpp"
-#include "serial/rm_serial_port.hpp"
+#include "devices/camera/rm_video_capture.hpp"
+#include "devices/serial/rm_serial_port.hpp"
+#include "module/angle_solve/rm_solve_pnp.hpp"
+#include "module/armor/rm_armor.hpp"
 
 class Connector {
  private:
-  Mat src_img_;
+  cv::Mat src_img_;
 
  public:
   void run();

@@ -1,10 +1,13 @@
-#include "rm_solvepnp/rm_solvepnp.hpp"
+#include "module/angle_solve/rm_solve_pnp.hpp"
+
+namespace angle_solve {
+
 /**
  * @brief 初始化相机参数
  *
  * @param _camera_path 相机标定文件路径
  */
-Rm_Solvepnp::Rm_Solvepnp(std::string _camera_path,
+RM_Solvepnp::RM_Solvepnp(std::string _camera_path,
                          std::string _pnp_config_path) {
   //读取摄像头标定xml文件
   cv::FileStorage fs_camera(_camera_path, cv::FileStorage::READ);
@@ -80,7 +83,7 @@ Rm_Solvepnp::Rm_Solvepnp(std::string _camera_path,
             << std::endl;
 }
 
-Rm_Solvepnp::Rm_Solvepnp() {}
+RM_Solvepnp::RM_Solvepnp() {}
 
 /**
  * @brief 计算目标偏移角度
@@ -91,7 +94,7 @@ Rm_Solvepnp::Rm_Solvepnp() {}
  * @param _rect 目标旋转矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
                                cv::Mat &_src_img, cv::RotatedRect _rect) {
   object_3d_ = this->initialize_3d_Points(_armor_type);
   target_2d_ = this->initialize_2d_Points(_rect);
@@ -122,7 +125,7 @@ void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  * @param _rect 目标外接矩形
  * @return void yaw pitch偏移量 和 目标depth信息
  */
-void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
                                cv::Mat &_src_img, cv::Rect _rect) {
   object_3d_ = this->initialize_3d_Points(_armor_type);
   target_2d_ = this->initialize_2d_Points(_rect);
@@ -154,7 +157,7 @@ void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  * @param _rect 目标外接矩形
  * @return void yaw pitch偏移量 和 目标depth信息
  */
-void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
                                cv::Mat &_src_img, cv::RotatedRect _rect) {
   object_3d_ = this->initialize_3d_Points(_width, _height);
   target_2d_ = this->initialize_2d_Points(_rect);
@@ -186,7 +189,7 @@ void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
  * @param _rect 目标外接矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
                                cv::Mat &_src_img, cv::Rect _rect) {
   object_3d_ = this->initialize_3d_Points(_width, _height);
   target_2d_ = this->initialize_2d_Points(_rect);
@@ -217,7 +220,7 @@ void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
  * @param _rect 目标旋转矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
                                cv::RotatedRect _rect) {
   object_3d_ = this->initialize_3d_Points(_armor_type);
   target_2d_ = this->initialize_2d_Points(_rect);
@@ -245,7 +248,7 @@ void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  * @param _rect 目标外接矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
                                cv::Rect _rect) {
   object_3d_ = this->initialize_3d_Points(_armor_type);
   target_2d_ = this->initialize_2d_Points(_rect);
@@ -274,7 +277,7 @@ void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
  * @param _rect 目标外接矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
                                cv::RotatedRect _rect) {
   object_3d_ = this->initialize_3d_Points(_width, _height);
   target_2d_ = this->initialize_2d_Points(_rect);
@@ -303,7 +306,7 @@ void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
  * @param _rect 目标外接矩形
  * @return cv::Point3f yaw pitch偏移量 和 目标depth信息
  */
-void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
                                cv::Rect _rect) {
   object_3d_ = this->initialize_3d_Points(_width, _height);
   target_2d_ = this->initialize_2d_Points(_rect);
@@ -322,4 +325,6 @@ void Rm_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
   solvepnp_info_.depth = angle.z;
 }
 
-Rm_Solvepnp::~Rm_Solvepnp() {}
+RM_Solvepnp::~RM_Solvepnp() {}
+
+}  // namespace angle_solve
