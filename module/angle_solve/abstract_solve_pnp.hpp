@@ -284,13 +284,10 @@ class Abstract_Solvepnp {
    * @param _bullet_speed 子弹速度
    * @param _company 重力补偿单位
    * 1 mm 10 cm 100 dm 1000 m
-   * @param _barrel_ptz_offset_x 云台与枪管的X轴偏移
-   * @param _barrel_ptz_offset_y 云台与枪管的Y轴偏移
    * @return cv::Point3f
    */
   cv::Point3f get_Angle(const cv::Mat &_pos_in_ptz, const int _bullet_speed,
-                        const int _company, const float _barrel_ptz_offset_x,
-                        const float _barrel_ptz_offset_y) {
+                        const int _company) {
     cv::Point3f angle;
     //计算子弹下坠补偿时间
     const double *_xyz = (const double *)_pos_in_ptz.data;
@@ -303,15 +300,16 @@ class Abstract_Solvepnp {
     double xyz[3] = {_xyz[0], _xyz[1] - offset_gravity, _xyz[2]};  // !!!!!
 
     //计算角度
-    if (_barrel_ptz_offset_y != 0.f) {
+    if (pnp_config_.barrel_ptz_offset_y != 0.f) {
       double alpha = 0.0, Beta = 0.0;
-      alpha = asin(static_cast<double>(_barrel_ptz_offset_y) /
+      alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_y) /
                    sqrt(xyz[1] * xyz[1] + xyz[2] * xyz[2]));
 
       if (xyz[1] < 0) {
         Beta = atan(-xyz[1] / xyz[2]);
         angle.y = static_cast<float>(-(alpha + Beta));  // camera coordinate
-      } else if (xyz[1] < static_cast<double>(_barrel_ptz_offset_y)) {
+      } else if (xyz[1] <
+                 static_cast<double>(pnp_config_.barrel_ptz_offset_y)) {
         Beta = atan(xyz[1] / xyz[2]);
         angle.y = static_cast<float>(-(alpha - Beta));
       } else {
@@ -321,14 +319,15 @@ class Abstract_Solvepnp {
     } else {
       angle.y = static_cast<float>(atan2(xyz[1], xyz[2]));
     }
-    if (_barrel_ptz_offset_x != 0.f) {
+    if (pnp_config_.barrel_ptz_offset_x != 0.f) {
       double alpha = 0.0, Beta = 0.0;
-      alpha = asin(static_cast<double>(_barrel_ptz_offset_x) /
+      alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_x) /
                    sqrt(xyz[0] * xyz[0] + xyz[2] * xyz[2]));
       if (xyz[0] > 0) {
         Beta = atan(-xyz[0] / xyz[2]);
         angle.x = static_cast<float>(-(alpha + Beta));  // camera coordinate
-      } else if (xyz[0] < static_cast<double>(_barrel_ptz_offset_x)) {
+      } else if (xyz[0] <
+                 static_cast<double>(pnp_config_.barrel_ptz_offset_x)) {
         Beta = atan(xyz[0] / xyz[2]);
         angle.x = static_cast<float>(-(alpha - Beta));
       } else {
@@ -345,6 +344,76 @@ class Abstract_Solvepnp {
     // pitch
     angle.y = static_cast<float>(angle.y) * 180 / CV_PI;
     angle.y -= this->get_Pitch(xyz[2], xyz[1], _bullet_speed * 1000, _company);
+
+    return angle;
+  }
+  /**
+   * @brief 计算yaw和pitch偏移量和depth
+   *
+   * @param _pos_in_ptz 世界坐标系
+   * @param _bullet_speed 子弹速度
+   * @param _company 重力补偿单位
+   * 1 mm 10 cm 100 dm 1000 m
+   * @return cv::Point3f
+   */
+  cv::Point3f get_Angle(const cv::Mat &_pos_in_ptz, const int _bullet_speed,
+                        const int _company, const int _depth) {
+    cv::Point3f angle;
+    //计算子弹下坠补偿时间
+    const double *_xyz = (const double *)_pos_in_ptz.data;
+    double down_t = 0.0;
+    if (_bullet_speed > 10e-3) {
+      down_t = _xyz[2] / (_bullet_speed * 1000);
+    }
+
+    double offset_gravity = 0.5 * 9.8 * down_t * down_t * 1000;
+    double xyz[3] = {_xyz[0], _xyz[1] - offset_gravity, _xyz[2]};  // !!!!!
+
+    //计算角度
+    if (pnp_config_.barrel_ptz_offset_y != 0.f) {
+      double alpha = 0.0, Beta = 0.0;
+      alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_y) /
+                   sqrt(xyz[1] * xyz[1] + xyz[2] * xyz[2]));
+
+      if (xyz[1] < 0) {
+        Beta = atan(-xyz[1] / xyz[2]);
+        angle.y = static_cast<float>(-(alpha + Beta));  // camera coordinate
+      } else if (xyz[1] <
+                 static_cast<double>(pnp_config_.barrel_ptz_offset_y)) {
+        Beta = atan(xyz[1] / xyz[2]);
+        angle.y = static_cast<float>(-(alpha - Beta));
+      } else {
+        Beta = atan(xyz[1] / xyz[2]);
+        angle.y = static_cast<float>((Beta - alpha));  // camera coordinate
+      }
+    } else {
+      angle.y = static_cast<float>(atan2(xyz[1], xyz[2]));
+    }
+    if (pnp_config_.barrel_ptz_offset_x != 0.f) {
+      double alpha = 0.0, Beta = 0.0;
+      alpha = asin(static_cast<double>(pnp_config_.barrel_ptz_offset_x) /
+                   sqrt(xyz[0] * xyz[0] + xyz[2] * xyz[2]));
+      if (xyz[0] > 0) {
+        Beta = atan(-xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(-(alpha + Beta));  // camera coordinate
+      } else if (xyz[0] <
+                 static_cast<double>(pnp_config_.barrel_ptz_offset_x)) {
+        Beta = atan(xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(-(alpha - Beta));
+      } else {
+        Beta = atan(xyz[0] / xyz[2]);
+        angle.x = static_cast<float>(Beta - alpha);  // camera coordinate
+      }
+    } else {
+      angle.x = static_cast<float>(atan2(xyz[0], xyz[2]));
+    }
+    // depth
+    angle.z = _depth;
+    // yaw
+    angle.x = static_cast<float>(angle.x) * 180 / CV_PI;
+    // pitch
+    angle.y = static_cast<float>(angle.y) * 180 / CV_PI;
+    angle.y -= this->get_Pitch(_depth, xyz[1], _bullet_speed * 1000, _company);
 
     return angle;
   }

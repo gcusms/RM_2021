@@ -107,17 +107,15 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
-  cv::Point3f angle =
-      this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
-                      pnp_config_.barrel_ptz_offset_y);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
-    object_3d_.clear();
+  object_3d_.clear();
   std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
   target_2d_.clear();
-   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -142,17 +140,15 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
-  cv::Point3f angle =
-      this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
-                      pnp_config_.barrel_ptz_offset_y);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
-    object_3d_.clear();
+  object_3d_.clear();
   std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
   target_2d_.clear();
-   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -178,17 +174,15 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
-  cv::Point3f angle =
-      this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
-                      pnp_config_.barrel_ptz_offset_y);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
-    object_3d_.clear();
+  object_3d_.clear();
   std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
   target_2d_.clear();
-   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -214,9 +208,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
-  cv::Point3f angle =
-      this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
-                      pnp_config_.barrel_ptz_offset_y);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
@@ -224,8 +216,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
   object_3d_.clear();
   std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
   target_2d_.clear();
-   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
-  
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -247,9 +238,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
-  cv::Point3f angle =
-      this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
-                      pnp_config_.barrel_ptz_offset_y);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
@@ -257,7 +246,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
   object_3d_.clear();
   std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
   target_2d_.clear();
-   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -279,17 +268,15 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
-  cv::Point3f angle =
-      this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
-                      pnp_config_.barrel_ptz_offset_y);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
-    object_3d_.clear();
+  object_3d_.clear();
   std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
   target_2d_.clear();
-   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -312,17 +299,15 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
-  cv::Point3f angle =
-      this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
-                      pnp_config_.barrel_ptz_offset_y);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
-    object_3d_.clear();
+  object_3d_.clear();
   std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
   target_2d_.clear();
-   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
 /**
@@ -345,19 +330,102 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
   cv::Mat ptz =
       this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
                        pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
-  cv::Point3f angle =
-      this->get_Angle(ptz, _ballet_speed, 1, pnp_config_.barrel_ptz_offset_x,
-                      pnp_config_.barrel_ptz_offset_y);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
   solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
   solvepnp_info_.depth = angle.z;
-    object_3d_.clear();
+  object_3d_.clear();
   std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
   target_2d_.clear();
-   std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
 }
 
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+                               std::vector<cv::Point2f> _target_2d) {
+  object_3d_ = this->initialize_3d_Points(_armor_type);
+  target_2d_ = _target_2d;
+
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
+               false, cv::SOLVEPNP_ITERATIVE);
+  cv::Mat ptz =
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
+
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
+  object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+}
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+                               cv::Mat &_src_img,
+                               std::vector<cv::Point2f> _target_2d) {
+  object_3d_ = this->initialize_3d_Points(_armor_type);
+  target_2d_ = _target_2d;
+
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
+               false, cv::SOLVEPNP_ITERATIVE);
+
+  this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
+
+  cv::Mat ptz =
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
+
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
+  object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+}
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+                               cv::RotatedRect _rect, int _depth) {
+  object_3d_ = this->initialize_3d_Points(_armor_type);
+  target_2d_ = this->initialize_2d_Points(_rect);
+
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
+               false, cv::SOLVEPNP_ITERATIVE);
+  cv::Mat ptz =
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1, _depth);
+
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
+  object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+}
+void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
+                               std::vector<cv::Point2f> _target_2d,
+                               int _depth) {
+  object_3d_ = this->initialize_3d_Points(_armor_type);
+  target_2d_ = _target_2d;
+
+  cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
+               false, cv::SOLVEPNP_ITERATIVE);
+  cv::Mat ptz =
+      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
+                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1, _depth);
+
+  solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
+  solvepnp_info_.yaw_angle = angle.x + pnp_config_.offset_armor_yaw;
+  solvepnp_info_.depth = angle.z;
+  object_3d_.clear();
+  std::vector<cv::Point3f>(object_3d_).swap(object_3d_);
+  target_2d_.clear();
+  std::vector<cv::Point2f>(target_2d_).swap(target_2d_);
+}
 RM_Solvepnp::~RM_Solvepnp() {}
 
 }  // namespace angle_solve
