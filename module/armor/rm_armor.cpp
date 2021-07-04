@@ -99,11 +99,31 @@ bool RM_ArmorDetector::find_Light() {
     std::cout << "轮廓数量小于2" << std::endl;
     return false;
   }
+  if (light_config_.light_edit == 1) {
+    cv::namedWindow("light_trackbar");
+    cv::createTrackbar("angle_min", "light_trackbar", &light_config_.angle_min,
+                       1800, NULL);
+    cv::createTrackbar("angle_max", "light_trackbar", &light_config_.angle_min,
+                       1800, NULL);
+    cv::createTrackbar("perimeter_min", "light_trackbar",
+                       &light_config_.perimeter_min, 100000, NULL);
+    cv::createTrackbar("perimeter_max", "light_trackbar",
+                       &light_config_.perimeter_max, 100000, NULL);
+
+    cv::createTrackbar("ratio_w_h_min", "light_trackbar",
+                       &light_config_.ratio_w_h_min, 1000, NULL);
+    cv::createTrackbar("ratio_w_h_min", "light_trackbar",
+                       &light_config_.ratio_w_h_min, 1000, NULL);
+
+    cv::imshow("light_trackbar", light_trackbar_);
+  }
+
   //筛选，去除一部分矩形
   for (size_t i = 0; i < contours.size(); i++) {
     perimeter = arcLength(contours[i], true);
     //轮廓周长
-    if (perimeter < 20 || perimeter > 4000 || contours[i].size() < 5) {
+    if (perimeter < light_config_.perimeter_min ||
+        perimeter > light_config_.perimeter_max || contours[i].size() < 5) {
       continue;
     }
     //椭圆拟合
@@ -120,7 +140,10 @@ bool RM_ArmorDetector::find_Light() {
     float _w = MIN(box.size.width, box.size.height);
     light_w_h = _h / _w;
     // cout << light_w_h << endl;
-    if (fabs(box.angle) < 40 && light_w_h < 15 && light_w_h > 3) {
+    if (box.angle < light_config_.angle_max &&
+        box.angle > light_config_.angle_min &&
+        light_w_h < light_config_.ratio_w_h_max &&
+        light_w_h > light_config_.ratio_w_h_min) {
       this->light_.push_back(box);  //保存灯条
 
       if (light_config_.light_draw == 1) {
@@ -153,14 +176,14 @@ bool RM_ArmorDetector::run_Armor(cv::Mat &_src_img, int _my_color) {
   if (find_Light()) {
     if (fitting_Armor()) {
       final_Armor();
-      if (armor_config_.armor_edit == 1|| light_config_.light_edit == 1) {
+      if (armor_config_.armor_edit == 1 || light_config_.light_draw == 1) {
         imshow("armor_draw", draw_img_);
         draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
       }
       return true;
     }
   }
-  if (armor_config_.armor_edit == 1) {
+  if (armor_config_.armor_edit == 1 || light_config_.light_draw == 1) {
     imshow("armor_draw", draw_img_);
     draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
@@ -366,15 +389,19 @@ bool RM_ArmorDetector::light_Judge(int i, int j) {
  * @return int 返回平均强度
  */
 int RM_ArmorDetector::average_Color() {
-  armor_data_.left_light_height = MAX(armor_data_.left_light_height,  armor_data_.left_light_width);
-  armor_data_.left_light_width = MIN(armor_data_.left_light_height, armor_data_.left_light_width);
-  armor_data_.right_light_height = MAX(armor_data_.right_light_height,  armor_data_.right_light_width);
-  armor_data_.right_light_width = MIN(armor_data_.right_light_height, armor_data_.right_light_width);
+  armor_data_.left_light_height =
+      MAX(armor_data_.left_light_height, armor_data_.left_light_width);
+  armor_data_.left_light_width =
+      MIN(armor_data_.left_light_height, armor_data_.left_light_width);
+  armor_data_.right_light_height =
+      MAX(armor_data_.right_light_height, armor_data_.right_light_width);
+  armor_data_.right_light_width =
+      MIN(armor_data_.right_light_height, armor_data_.right_light_width);
   cv::RotatedRect rects = cv::RotatedRect(
       (armor_data_.left_light.center + armor_data_.right_light.center) / 2,
       cv::Size(
           armor_data_.width -
-              (armor_data_.left_light_width + armor_data_.right_light_width) ,
+              (armor_data_.left_light_width + armor_data_.right_light_width),
           (armor_data_.left_light_height + armor_data_.right_light_height) / 2),
       armor_data_.tan_angle);
   cv::rectangle(draw_img_, rects.boundingRect(), cv::Scalar(0, 0, 255), 3, 8);

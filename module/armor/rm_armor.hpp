@@ -96,7 +96,7 @@ class RM_ArmorDetector {
   int motion_Direction();          //判断装甲板运动方向
   cv::RotatedRect return_Final_Armor_RotatedRect(int _num);
   int return_Final_Armor_Distinguish(int _num);
-  int return_Armor_num(){return armor_.size();};
+  int return_Armor_num() { return armor_.size(); };
   RM_ArmorDetector() {}
   RM_ArmorDetector(std::string _armor_config);
   ~RM_ArmorDetector() {}
@@ -113,6 +113,7 @@ class RM_ArmorDetector {
   cv::Mat hsv_img;
   cv::Mat bin_gray_img;
   cv::Mat bin_color_img;
+  cv::Mat light_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
   cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
 
   Armor_Data armor_data_;

@@ -73,13 +73,13 @@
  * @brief: 绘制灯条
  */ 0 关闭 1 开启
 -->
-<LIGHT_DRAW>0</LIGHT_DRAW>
+<LIGHT_DRAW>1</LIGHT_DRAW>
 <!--
 /**
  * @brief: 灯条调参
  */ 0 关闭 1 开启
 -->
-<LIGHT_EDTI>0</LIGHT_EDTI>
+<LIGHT_EDTI>1</LIGHT_EDTI>
 <!--
 /**
  * @brief: 灯条宽高比范围
