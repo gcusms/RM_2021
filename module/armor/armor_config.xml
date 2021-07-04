@@ -79,7 +79,7 @@
  * @brief: 灯条调参
  */ 0 关闭 1 开启
 -->
-<LIGHT_EDTI>1</LIGHT_EDTI>
+<LIGHT_EDTI>0</LIGHT_EDTI>
 <!--
 /**
  * @brief: 灯条宽高比范围
@@ -116,7 +116,13 @@
  */
 -->
 <ARMOR_EDIT>0</ARMOR_EDIT>
-
+<!--
+/**
+ * @brief: 装甲板绘制
+ * 0 关闭 1 开启
+ */
+-->
+<ARMOR_DRAW>1</ARMOR_DRAW>
 <!--
 /**
  * @brief: 左右灯条高度比

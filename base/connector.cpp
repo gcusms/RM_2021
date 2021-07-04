@@ -6,7 +6,7 @@ Connector::~Connector() {}
 
 void Connector::run() {
   mv_camera::RM_VideoCapture mv_capture_(mv_camera::CameraParam(
-      0, mv_camera::RESOLUTION_1280_X_800, mv_camera::EXPOSURE_600));
+      1, mv_camera::RESOLUTION_1280_X_800, mv_camera::EXPOSURE_600));
   angle_solve::RM_Solvepnp pnp_(
       "devices/camera/cameraParams/cameraParams_407.xml",
       "module/angle_solve/pnp_config.xml");
@@ -20,7 +20,7 @@ void Connector::run() {
       cap.read(src_img_);
     }
     if (!src_img_.empty()) {
-      // serial_.updateReceiveInformation();
+      serial_.updateReceiveInformation();
       switch (serial_.returnReceiveMode()) {
         case serial_port::SUP_SHOOT:
           if (armor_.run_Armor(src_img_, serial_.returnReceiceColor())) {

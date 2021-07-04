@@ -40,6 +40,7 @@ RM_ArmorDetector::RM_ArmorDetector(std::string _armor_config) {
 
   //装甲匹配参数初始化
   fs_armor["ARMOR_EDIT"] >> armor_config_.armor_edit;
+  fs_armor["armor_draw"] >> armor_config_.armor_draw;
   fs_armor["ARMOR_HEIGHT_RATIO_MIN"] >> armor_config_.light_height_ratio_min;
   fs_armor["ARMOR_HEIGHT_RATIO_MAX"] >> armor_config_.light_height_ratio_max;
 
@@ -172,19 +173,21 @@ bool RM_ArmorDetector::find_Light() {
 bool RM_ArmorDetector::run_Armor(cv::Mat &_src_img, int _my_color) {
   //图像处理
   run_Image(_src_img, _my_color);
-  draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
+  draw_img_ = _src_img;
   if (find_Light()) {
     if (fitting_Armor()) {
       final_Armor();
-      if (armor_config_.armor_edit == 1 || light_config_.light_draw == 1) {
-        imshow("armor_draw", draw_img_);
+      if (armor_config_.armor_draw == 1 || light_config_.light_draw == 1 ||
+          armor_config_.armor_edit == 1 || light_config_.light_edit == 1) {
+        imshow("armor_draw_img", draw_img_);
         draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
       }
       return true;
     }
   }
-  if (armor_config_.armor_edit == 1 || light_config_.light_draw == 1) {
-    imshow("armor_draw", draw_img_);
+  if (armor_config_.armor_draw == 1 || light_config_.light_draw == 1 ||
+      armor_config_.armor_edit == 1 || light_config_.light_edit == 1) {
+    imshow("armor_draw_img", draw_img_);
     draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
   return false;
@@ -212,7 +215,7 @@ void RM_ArmorDetector::final_Armor() {
   } else {
     std::cout << "有多个装甲板" << std::endl;
     std::sort(armor_.begin(), armor_.end(), comparison);
-    if (armor_config_.armor_edit == 1) {
+    if (armor_config_.armor_draw == 1 || armor_config_.armor_edit == 1) {
       cv::rectangle(draw_img_, armor_[0].armor_rect.boundingRect(),
                     cv::Scalar(0, 255, 0), 3, 8);
     }
@@ -234,6 +237,33 @@ int RM_ArmorDetector::return_Final_Armor_Distinguish(int _num) {
  *
  */
 bool RM_ArmorDetector::fitting_Armor() {
+  if (armor_config_.armor_edit == 1) {
+    cv::namedWindow("armor_trackbar");
+    cv::createTrackbar("light_height_aspect_min", "armor_trackbar",
+                       &armor_config_.light_height_ratio_min, 100, NULL);
+    cv::createTrackbar("light_height_aspect_max", "armor_trackbar",
+                       &armor_config_.light_height_ratio_max, 100, NULL);
+    cv::createTrackbar("light_width_aspect_min", "armor_trackbar",
+                       &armor_config_.light_width_ratio_min, 100, NULL);
+    cv::createTrackbar("light_width_aspect_min", "armor_trackbar",
+                       &armor_config_.light_width_ratio_min, 100, NULL);
+
+    cv::createTrackbar("light_y_different", "armor_trackbar",
+                       &armor_config_.light_y_different, 100, NULL);
+    cv::createTrackbar("light_height_different", "armor_trackbar",
+                       &armor_config_.light_height_different, 100, NULL);
+
+    cv::createTrackbar("armor_angle_different", "armor_trackbar",
+                       &armor_config_.armor_angle_different, 100, NULL);
+
+    cv::createTrackbar("small_armor_aspect_min", "armor_trackbar",
+                       &armor_config_.small_armor_aspect_min, 100, NULL);
+    cv::createTrackbar("armor_type_th", "armor_trackbar",
+                       &armor_config_.armor_type_th, 100, NULL);
+    cv::createTrackbar("big_armor_aspect_max", "armor_trackbar",
+                       &armor_config_.big_armor_aspect_max, 100, NULL);
+    cv::imshow("armor_trackbar", armor_trackbar_);
+  }
   //遍历灯条
   for (size_t i = 0; i < this->light_.size(); i++) {
     for (size_t j = i + 1; j < this->light_.size(); j++) {
@@ -261,11 +291,12 @@ bool RM_ArmorDetector::fitting_Armor() {
         if (this->light_Judge(light_left, light_right)) {
           if (this->average_Color() < 20) {
             armor_.push_back(armor_data_);
-            // if (armor_config_.armor_edit == 1) {
-            //   //绘制所有装甲板
-            //   rectangle(draw_img_, armor_data_.armor_rect.boundingRect(),
-            //             cv::Scalar(255, 255, 0), 5, 8);
-            // }
+            if (armor_config_.armor_draw == 1 ||
+                armor_config_.armor_edit == 1) {
+              //绘制所有装甲板
+              rectangle(draw_img_, armor_data_.armor_rect.boundingRect(),
+                        cv::Scalar(255, 255, 0), 5, 8);
+            }
           }
         }
       }
@@ -298,34 +329,6 @@ bool RM_ArmorDetector::light_Judge(int i, int j) {
       armor_data_.left_light_height / armor_data_.right_light_height;
   armor_data_.light_width_aspect =
       armor_data_.left_light_width / armor_data_.right_light_width;
-
-  if (armor_config_.armor_edit == 1) {
-    cv::namedWindow("armor_trackbar");
-    cv::createTrackbar("light_height_aspect_min", "armor_trackbar",
-                       &armor_config_.light_height_ratio_min, 100, NULL);
-    cv::createTrackbar("light_height_aspect_max", "armor_trackbar",
-                       &armor_config_.light_height_ratio_max, 100, NULL);
-    cv::createTrackbar("light_width_aspect_min", "armor_trackbar",
-                       &armor_config_.light_width_ratio_min, 100, NULL);
-    cv::createTrackbar("light_width_aspect_min", "armor_trackbar",
-                       &armor_config_.light_width_ratio_min, 100, NULL);
-
-    cv::createTrackbar("light_y_different", "armor_trackbar",
-                       &armor_config_.light_y_different, 100, NULL);
-    cv::createTrackbar("light_height_different", "armor_trackbar",
-                       &armor_config_.light_height_different, 100, NULL);
-
-    cv::createTrackbar("armor_angle_different", "armor_trackbar",
-                       &armor_config_.armor_angle_different, 100, NULL);
-
-    cv::createTrackbar("small_armor_aspect_min", "armor_trackbar",
-                       &armor_config_.small_armor_aspect_min, 100, NULL);
-    cv::createTrackbar("armor_type_th", "armor_trackbar",
-                       &armor_config_.armor_type_th, 100, NULL);
-    cv::createTrackbar("big_armor_aspect_max", "armor_trackbar",
-                       &armor_config_.big_armor_aspect_max, 100, NULL);
-    cv::imshow("armor_trackbar", armor_trackbar_);
-  }
 
   if (armor_data_.light_height_aspect <
           (armor_config_.light_height_ratio_max * 0.1) &&

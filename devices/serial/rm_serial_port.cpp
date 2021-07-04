@@ -210,7 +210,7 @@ void SerialPort::rmSerialWrite(const int& _yaw, const int16_t& yaw,
   }
 }
 void SerialPort::updataWriteData(const float _yaw, const float _pitch,
-                                 const int _depth,  int _data_type,
+                                 const int _depth, int _data_type,
                                  const int _is_shooting) {
   write_data_.symbol_yaw = 0;
   if (_yaw >= 0) {
@@ -220,12 +220,11 @@ void SerialPort::updataWriteData(const float _yaw, const float _pitch,
   if (_pitch >= 0) {
     write_data_.symbol_pitch = 1;
   }
-  if(_data_type >1)
-  {
+  if (_data_type > 1) {
     _data_type = 1;
   }
-  write_data_.yaw_angle = fabs(_yaw)*100;
-  write_data_.pitch_angle = fabs(_pitch)*100;
+  write_data_.yaw_angle = fabs(_yaw) * 100;
+  write_data_.pitch_angle = fabs(_pitch) * 100;
   write_data_.depth = _depth;
   write_data_.data_type = _data_type;
   write_data_.is_shooting = _is_shooting;
@@ -365,13 +364,8 @@ void SerialPort::updateReceiveInformation() {
   rmReceiveData();
   if (isEmpty()) {
     receive_data_ = last_receive_data_;
-    return;
   }
   last_receive_data_ = receive_data_;
-  for(size_t i =0; i< sizeof(receive_buff_); ++i)
-  {
-    std::cout<<receive_buff_[i]<<std::endl;
-  }
   //转换类型为 int
   for (size_t i = 0; i < sizeof(transform_arr_) / sizeof(transform_arr_[0]);
        ++i) {
@@ -468,5 +462,21 @@ void SerialPort::updateReceiveInformation() {
       SerialPort::mergeIntoBytes(this->receive_buff_[12],
                                  this->receive_buff_[13]) /
       100.f;
+  if (serial_config_.show_serial_information == 1) {
+    displayReceiveInformation();
+  }
+}
+/**
+ * @brief 打印当前接收的信息
+ */
+void SerialPort::displayReceiveInformation() {
+  std::cout << "color:" << this->receive_data_.my_color
+            << " model:" << this->receive_data_.now_run_mode
+            << " ID:" << this->receive_data_.my_robot_id
+            << " yaw:" << this->receive_data_.Receive_Yaw_Angle_Info.yaw_angle
+            << " pitch:"
+            << this->receive_data_.Receive_Pitch_Angle_Info.pitch_angle
+            << " acceleration:" << this->receive_data_.acceleration
+            << " volacity:" << this->receive_data_.bullet_volacity << std::endl;
 }
 }  // namespace serial_port

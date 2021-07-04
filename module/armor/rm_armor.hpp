@@ -25,7 +25,7 @@ struct Armor_Data {
 };
 struct Armor_Cfg {
   int armor_edit;
-
+  int armor_draw;
   int light_height_ratio_min;
   int light_height_ratio_max;
   int light_width_ratio_min;
