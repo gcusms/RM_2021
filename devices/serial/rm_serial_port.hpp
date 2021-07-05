@@ -133,8 +133,8 @@ class SerialPort {
   int transform_arr_[4];
   unsigned char write_buff_[WRITE_BUFF_LENGTH];
   unsigned char crc_buff_[CRC_BUFF_LENGTH];
-  unsigned char receive_buff_[REC_INFO_LENGTH];
-  unsigned char receive_buff_temp_[REC_INFO_LENGTH * 2];
+  unsigned char receive_buff_[REC_INFO_LENGTH*2];
+  unsigned char receive_buff_temp_[REC_INFO_LENGTH * 4];
   // 高低八位的数据还原
   // 发送
   int16_t yaw_reduction_;  // TODO:是否可以改为 uint16_t
