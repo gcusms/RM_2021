@@ -119,7 +119,7 @@ SerialPort::~SerialPort(void) {
  *            Wcjjj
  */
 void SerialPort::rmReceiveData() {
-  memset(receive_buff_, '0', REC_INFO_LENGTH);               //清空缓存
+  memset(receive_buff_, '0', REC_INFO_LENGTH*2);               //清空缓存
   read(fd, receive_buff_temp_, sizeof(receive_buff_temp_));  //读取串口中的数据
   //对读取到的数据进行遍历排查，直到截取 'S' 开头和 'E'结尾的数据段后保存并退出
   for (int i = 0; i < (int)sizeof(receive_buff_temp_); ++i) {

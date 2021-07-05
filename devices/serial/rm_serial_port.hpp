@@ -15,7 +15,7 @@ namespace serial_port {
  */
 enum BuffLength {
   // 接收
-  REC_INFO_LENGTH = 8,  // 接受后解码得到的数组长度 TODO: 还未使用
+  REC_INFO_LENGTH = 16,  // 接受后解码得到的数组长度 TODO: 还未使用
   // 发送
   CRC_BUFF_LENGTH = 11,    // 写入 CRC 校验的 BUFF 长度
   WRITE_BUFF_LENGTH = 13,  // 写入串口的 BUFF 长度

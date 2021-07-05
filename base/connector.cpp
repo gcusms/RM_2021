@@ -6,7 +6,7 @@ Connector::~Connector() {}
 
 void Connector::run() {
   mv_camera::RM_VideoCapture mv_capture_(mv_camera::CameraParam(
-      1, mv_camera::RESOLUTION_1280_X_800, mv_camera::EXPOSURE_600));
+      0, mv_camera::RESOLUTION_1280_X_800, mv_camera::EXPOSURE_600));
   angle_solve::RM_Solvepnp pnp_(
       "devices/camera/cameraParams/cameraParams_407.xml",
       "module/angle_solve/pnp_config.xml");
