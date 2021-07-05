@@ -136,13 +136,13 @@ bool RM_ArmorDetector::find_Light() {
     }
 
     //灯条长宽比
-    float light_w_h;
-    float _h = MAX(box.size.width, box.size.height);
-    float _w = MIN(box.size.width, box.size.height);
+    static float light_w_h;
+    static float _h = MAX(box.size.width, box.size.height);
+    static float _w = MIN(box.size.width, box.size.height);
     light_w_h = _h / _w;
     // cout << light_w_h << endl;
     if (box.angle < light_config_.angle_max &&
-        box.angle > light_config_.angle_min &&
+        box.angle > -light_config_.angle_min &&
         light_w_h < light_config_.ratio_w_h_max &&
         light_w_h > light_config_.ratio_w_h_min) {
       this->light_.push_back(box);  //保存灯条
@@ -322,7 +322,7 @@ bool RM_ArmorDetector::light_Judge(int i, int j) {
   armor_data_.left_light_width =
       MIN(light_[i].size.height, light_[i].size.width);
   armor_data_.right_light_height =
-      MAX(light_[j].size.height, light_[j].size.width);
+      MAX(light_[j].size.height, light_[j].s ize.width);
   armor_data_.right_light_width =
       MIN(light_[j].size.height, light_[j].size.width);
   armor_data_.light_height_aspect =
