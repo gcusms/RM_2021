@@ -104,7 +104,7 @@ bool RM_ArmorDetector::find_Light() {
     cv::namedWindow("light_trackbar");
     cv::createTrackbar("angle_min", "light_trackbar", &light_config_.angle_min,
                        1800, NULL);
-    cv::createTrackbar("angle_max", "light_trackbar", &light_config_.angle_min,
+    cv::createTrackbar("angle_max", "light_trackbar", &light_config_.angle_max,
                        1800, NULL);
     cv::createTrackbar("perimeter_min", "light_trackbar",
                        &light_config_.perimeter_min, 100000, NULL);
@@ -113,8 +113,8 @@ bool RM_ArmorDetector::find_Light() {
 
     cv::createTrackbar("ratio_w_h_min", "light_trackbar",
                        &light_config_.ratio_w_h_min, 1000, NULL);
-    cv::createTrackbar("ratio_w_h_min", "light_trackbar",
-                       &light_config_.ratio_w_h_min, 1000, NULL);
+    cv::createTrackbar("ratio_w_h_max", "light_trackbar",
+                       &light_config_.ratio_w_h_max, 1000, NULL);
 
     cv::imshow("light_trackbar", light_trackbar_);
   }
@@ -245,8 +245,8 @@ bool RM_ArmorDetector::fitting_Armor() {
                        &armor_config_.light_height_ratio_max, 100, NULL);
     cv::createTrackbar("light_width_aspect_min", "armor_trackbar",
                        &armor_config_.light_width_ratio_min, 100, NULL);
-    cv::createTrackbar("light_width_aspect_min", "armor_trackbar",
-                       &armor_config_.light_width_ratio_min, 100, NULL);
+    cv::createTrackbar("light_width_ratio_max", "armor_trackbar",
+                       &armor_config_.light_width_ratio_max, 100, NULL);
 
     cv::createTrackbar("light_y_different", "armor_trackbar",
                        &armor_config_.light_y_different, 100, NULL);

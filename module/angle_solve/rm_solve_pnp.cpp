@@ -26,10 +26,16 @@ RM_Solvepnp::RM_Solvepnp(std::string _camera_path,
   //固定偏移量
   fs_config["OFFSET_ARMOR_YAW"] >> pnp_config_.offset_armor_yaw;
   fs_config["OFFSET_ARMOR_PITCH"] >> pnp_config_.offset_armor_pitch;
-  //是否绘制坐标系
-  fs_config["DRAW_XYZ"] >> pnp_config_.draw_xyz;
   //选择补偿算法单位
   fs_config["COMPANY"] >> pnp_config_.company;
+  fs_config["BIG_ARMOR_WIDTH"] >> pnp_config_.big_armor_width;
+  fs_config["BIG_ARMOR_HEIGHT"] >> pnp_config_.big_armor_height;
+
+  fs_config["SMALL_ARMOR_WIDTH"] >> pnp_config_.small_armor_width;
+  fs_config["SMALL_ARMOR_HEIGHT"] >> pnp_config_.small_armor_height;
+
+  fs_config["BUFF_ARMOR_WIDTH"] >> pnp_config_.buff_armor_width;
+  fs_config["BUFF_ARMOR_HEIGHT"] >> pnp_config_.buff_armor_height;
   //打印
   std::cout << "------------------------------------------------------------"
             << std::endl;
@@ -58,9 +64,6 @@ RM_Solvepnp::RM_Solvepnp(std::string _camera_path,
 
   std::cout << std::endl;
 
-  if (pnp_config_.draw_xyz == 1) {
-    std::cout << "打开坐标系绘制" << std::endl;
-  }
   switch (pnp_config_.company) {
     case 1:
       std::cout << "重力补偿算法单位为mm" << std::endl;
@@ -104,9 +107,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 
   this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
 
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -137,9 +138,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 
   this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
 
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -171,9 +170,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
 
   this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
 
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -205,9 +202,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
 
   this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
 
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -235,9 +230,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -265,9 +258,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -296,9 +287,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -327,9 +316,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _width, int _height,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -348,9 +335,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -372,9 +357,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 
   this->draw_Coordinate(_src_img, rvec_, tvec_, cameraMatrix_, distCoeffs_);
 
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -392,9 +375,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1, _depth);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;
@@ -413,9 +394,7 @@ void RM_Solvepnp::run_Solvepnp(int _ballet_speed, int _armor_type,
 
   cv::solvePnP(object_3d_, target_2d_, cameraMatrix_, distCoeffs_, rvec_, tvec_,
                false, cv::SOLVEPNP_ITERATIVE);
-  cv::Mat ptz =
-      this->camera_Ptz(tvec_, pnp_config_.ptz_camera_x,
-                       pnp_config_.ptz_camera_y, pnp_config_.ptz_camera_z);
+  cv::Mat ptz = this->camera_Ptz(tvec_);
   cv::Point3f angle = this->get_Angle(ptz, _ballet_speed, 1, _depth);
 
   solvepnp_info_.pitch_angle = angle.y + pnp_config_.offset_armor_pitch;

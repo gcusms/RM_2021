@@ -15,14 +15,6 @@
 
 <!--
 /**
-  * @brief 是否绘制坐标系
-  * 0 不绘制
-  * 1 绘制
-  */
-  -->
-<DRAW_XYZ>0</DRAW_XYZ>
-<!--
-/**
   @brief: 相机与云台的X轴偏移 左负右正
   @brief: 相机与云台的Y轴偏移 上负下正
   @brief: 相机与云台的Z轴偏移 前正后负
@@ -54,5 +46,18 @@
 <OFFSET_ARMOR_PITCH>0.0</OFFSET_ARMOR_PITCH>
 <OFFSET_ARMOR_YAW>0.0</OFFSET_ARMOR_YAW>
 
+<!-- 
+/**
+  @note:  装甲板模型
+*/ 
+-->
+<BIG_ARMOR_WIDTH>245</BIG_ARMOR_WIDTH>
+<BIG_ARMOR_HEIGHT>60</BIG_ARMOR_HEIGHT>
+
+<SMALL_ARMOR_WIDTH>140</SMALL_ARMOR_WIDTH>
+<SMALL_ARMOR_HEIGHT>60</SMALL_ARMOR_HEIGHT>
+
+<BUFF_ARMOR_WIDTH>250</BUFF_ARMOR_WIDTH>
+<BUFF_ARMOR_HEIGHT>65</BUFF_ARMOR_HEIGHT>
 
 </opencv_storage>
