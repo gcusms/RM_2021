@@ -15,7 +15,7 @@ namespace serial_port {
  */
 enum BuffLength {
   // 接收
-  REC_INFO_LENGTH = 8,  // 接受后解码得到的数组长度 TODO: 还未使用
+  REC_INFO_LENGTH = 16,  // 接受后解码得到的数组长度 TODO: 还未使用
   // 发送
   CRC_BUFF_LENGTH = 11,    // 写入 CRC 校验的 BUFF 长度
   WRITE_BUFF_LENGTH = 13,  // 写入串口的 BUFF 长度
@@ -133,8 +133,8 @@ class SerialPort {
   int transform_arr_[4];
   unsigned char write_buff_[WRITE_BUFF_LENGTH];
   unsigned char crc_buff_[CRC_BUFF_LENGTH];
-  unsigned char receive_buff_[REC_INFO_LENGTH*2];
-  unsigned char receive_buff_temp_[REC_INFO_LENGTH * 4];
+  unsigned char receive_buff_[REC_INFO_LENGTH];
+  unsigned char receive_buff_temp_[REC_INFO_LENGTH * 2];
   // 高低八位的数据还原
   // 发送
   int16_t yaw_reduction_;  // TODO:是否可以改为 uint16_t
