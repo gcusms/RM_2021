@@ -353,7 +353,8 @@ void SerialPort::getDataForSend(const int& data_type, const int& is_shooting,
  * @return false    不为空
  */
 bool SerialPort::isEmpty() {
-  if (receive_buff_[0] != '0' || receive_buff_[REC_INFO_LENGTH - 1] != '0') {
+  if (receive_buff_[0] != '0' ||
+      receive_buff_[REC_INFO_LENGTH * 2 - 1] != '0') {
     return false;
   } else {
     return true;
@@ -424,21 +425,22 @@ void SerialPort::updateReceiveInformation() {
       break;
   }
   /* 14 更新子弹速度 */
-  this->transform_arr_[3] = this->receive_buff_[14] - '0';
-  switch (this->transform_arr_[3]) {
-    case 1:
-      this->receive_data_.bullet_volacity = 15;
-      break;
-    case 2:
-      this->receive_data_.bullet_volacity = 18;
-      break;
-    case 3:
-      this->receive_data_.bullet_volacity = 30;
-      break;
-    default:
-      this->receive_data_.bullet_volacity = 30;
-      break;
-  }
+  // this->transform_arr_[3] = this->receive_buff_[14] - '0';
+  // switch (this->transform_arr_[3]) {
+  //   case 1:
+  //     this->receive_data_.bullet_volacity = 15;
+  //     break;
+  //   case 2:
+  //     this->receive_data_.bullet_volacity = 18;
+  //     break;
+  //   case 3:
+  //     this->receive_data_.bullet_volacity = 30;
+  //     break;
+  //   default:
+  //     this->receive_data_.bullet_volacity = 30;
+  //     break;
+  // }
+  this->receive_data_.bullet_volacity = this->receive_buff_[14];
   /* 4 5 6 7 更新陀螺仪的yaw角度值 */
   for (size_t i = 0;
        i < sizeof(this->receive_data_.Receive_Yaw_Angle_Info.arr_yaw_angle);
