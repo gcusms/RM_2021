@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include "base/connector.hpp"
 
 int main() {

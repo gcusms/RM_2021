@@ -3,7 +3,7 @@
 namespace armor {
 RM_ArmorDetector::RM_ArmorDetector(std::string _armor_config) {
   cv::FileStorage fs_armor(_armor_config, cv::FileStorage::READ);
-  //预处理调参开关
+  // 预处理调参开关
   fs_armor["GRAY_EDIT"] >> image_config_.gray_edit;
   fs_armor["COLOR_EDIT"] >> image_config_.color_edit;
   fs_armor["METHOD"] >> image_config_.method;
@@ -458,7 +458,7 @@ void RM_ArmorDetector::run_Image(cv::Mat &_src_img, const int _my_color) {
  */
 cv::Mat RM_ArmorDetector::fuse_Image(cv::Mat _bin_gray_img,
                                      cv::Mat _bin_color_img) {
-  cv::bitwise_or(_bin_color_img, _bin_gray_img, _bin_color_img);
+  cv::bitwise_and(_bin_color_img, _bin_gray_img, _bin_color_img);
   morphologyEx(_bin_color_img, _bin_color_img, cv::MORPH_DILATE, this->ele_);
   return _bin_color_img;
 }
