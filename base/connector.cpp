@@ -31,7 +31,8 @@ void Connector::run() {
             armor_.set_Final_Armor_Tx(pnp_.returnTvecTx(), 0);
             armor_.set_Final_Armor_Ty(pnp_.returnTvecTy(), 0);
             armor_.set_Final_Armor_Tz(pnp_.returnTvecTz(), 0);
-            top.getTuoluoData(src_img_, armor_.returnFinalArmor(0));
+            TopData a = top.getTuoluoData(src_img_, armor_.returnFinalArmor(0));
+            cout<<"isTop = "<<a.isTuoluo<<endl;
           }
 
           break;

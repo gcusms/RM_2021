@@ -103,7 +103,6 @@ TopData ShootTuoluo::getTuoluoData(cv::Mat _src_img,
       tuoluoData.R = R;
       tuoluoData.center = center;
       //更新击打点
-
       return tuoluoData;
     } else {
       //缓冲
@@ -427,6 +426,7 @@ void ShootTuoluo::drawImage(cv::Mat Src, double angle, cv::Point2f object,
   double adjustWidth = armorWidth * (R / 13.5) * sin(angle * CV_PI / 180);
   circle(Src, object + cv::Point2f(adjustWidth, 0), 20, cv::Scalar(0, 155, 255),
          -1, 12);
+  
 }
 
 //计算空间两点距离
