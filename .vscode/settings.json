@@ -60,6 +60,7 @@
         "cfenv": "cpp",
         "typeinfo": "cpp",
         "typeindex": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "*.ipp": "cpp"
     }
 }

@@ -32,6 +32,9 @@ class RM_Solvepnp : public Abstract_Solvepnp {
   inline float returnYawAngle() { return solvepnp_info_.yaw_angle; }
   inline float returnPitchAngle() { return solvepnp_info_.pitch_angle; }
   inline float returnDepth() { return solvepnp_info_.depth; }
+  inline double returnTvecTx() { return tvec_.ptr<double>(0)[0]; }
+  inline double returnTvecTy() { return tvec_.ptr<double>(0)[1]; }
+  inline double returnTvecTz() { return tvec_.ptr<double>(0)[2]; }
   void run_Solvepnp(int _ballet_speed, int _armor_type, cv::RotatedRect _rect,
                     int _depth);
 

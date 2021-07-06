@@ -221,17 +221,7 @@ void RM_ArmorDetector::final_Armor() {
     }
   }
 }
-/**
- * @brief 指定返回已排序后第几个装甲板的参数
- *
- * @return Armor_Data
- */
-cv::RotatedRect RM_ArmorDetector::return_Final_Armor_RotatedRect(int _num) {
-  return armor_[_num].armor_rect;
-}
-int RM_ArmorDetector::return_Final_Armor_Distinguish(int _num) {
-  return armor_[_num].distinguish;
-}
+
 /**
  * @brief 拟合装甲板
  *
@@ -322,7 +312,7 @@ bool RM_ArmorDetector::light_Judge(int i, int j) {
   armor_data_.left_light_width =
       MIN(light_[i].size.height, light_[i].size.width);
   armor_data_.right_light_height =
-      MAX(light_[j].size.height, light_[j].s ize.width);
+      MAX(light_[j].size.height, light_[j].size.width);
   armor_data_.right_light_width =
       MIN(light_[j].size.height, light_[j].size.width);
   armor_data_.light_height_aspect =
@@ -610,6 +600,7 @@ cv::Mat RM_ArmorDetector::hsv_Pretreat(cv::Mat &_src_img, const int _my_color) {
 
       break;
   }
+
   if (image_config_.gray_edit) {
     cv::imshow("hsv_trackbar", bin_color_img);
   }

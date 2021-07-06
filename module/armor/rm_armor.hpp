@@ -1,9 +1,26 @@
+#ifndef _RM_ARMOR_HPP_
+#define _RM_ARMOR_HPP_
+
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
 namespace armor {
-struct Armor_Data {
-  cv::RotatedRect armor_rect;   ///
+//射击模式
+enum Shooting_Mode {
+  FirstFind,  //首次识别
+  Shoot,      //连续射击
+  stop,       // stop
+  buffering   //缓冲
+};
+typedef struct Armor_Data {
+  cv::RotatedRect armor_rect;
+  //角度结算旋转向量
+  float tx = 0;
+  float ty = 0;
+  float tz = 0;
+  bool is_top = false;  //是否为陀螺状态
+  float top_width = 0.0f;
+  Shooting_Mode shooting_status = stop;
   float width = 0;              ///装甲板宽度
   float height = 0;             ///装甲板高度
   float aspect_ratio = 0;       ///装甲板宽高比
@@ -23,7 +40,8 @@ struct Armor_Data {
 
   int distinguish = 0;  ///大小装甲板 小0 大1
 };
-struct Armor_Cfg {
+
+typedef struct Armor_Cfg {
   int armor_edit;
   int armor_draw;
   int light_height_ratio_min;
@@ -40,7 +58,7 @@ struct Armor_Cfg {
   int big_armor_aspect_max;
 };
 
-struct Light_Cfg {
+typedef struct Light_Cfg {
   int light_draw;
   int light_edit;
   //灯条宽高比范围
@@ -54,7 +72,7 @@ struct Light_Cfg {
   int perimeter_min;
 };
 
-struct Image_Cfg {
+typedef struct Image_Cfg {
   // BGR
   int red_armor_gray_th;
   int red_armor_color_th;
@@ -94,9 +112,28 @@ class RM_ArmorDetector {
   void final_Armor();              //最优装甲板
   void free_Memory();              //释放内存
   int motion_Direction();          //判断装甲板运动方向
-  cv::RotatedRect return_Final_Armor_RotatedRect(int _num);
-  int return_Final_Armor_Distinguish(int _num);
-  int return_Armor_num() { return armor_.size(); };
+  inline Armor_Data returnFinalArmor(int _num) { return armor_[_num]; }
+  inline void set_Final_Armor_Tx(double _tx, int _num) {
+    armor_[_num].tx = _tx;
+  }
+  inline void set_Final_Armor_Ty(double _ty, int _num) {
+    armor_[_num].ty = _ty;
+  }
+  inline void set_Final_Armor_Tz(double _tz, int _num) {
+    armor_[_num].tz = _tz;
+  }
+  /**
+   * @brief 指定返回已排序后第几个装甲板的参数
+   *
+   * @return Armor_Data
+   */
+  inline cv::RotatedRect returnFinalArmorRotatedRect(int _num) {
+    return armor_[_num].armor_rect;
+  }
+  inline int returnFinalArmorDistinguish(int _num) {
+    return armor_[_num].distinguish;
+  }
+  inline int returnArmornum() { return armor_.size(); };
   RM_ArmorDetector() {}
   RM_ArmorDetector(std::string _armor_config);
   ~RM_ArmorDetector() {}
@@ -158,3 +195,5 @@ class RM_ArmorDetector {
   cv::Mat fuse_Image(cv::Mat _bin_gray_img, cv::Mat _bin_color_img);
 };
 }  // namespace armor
+
+#endif  // !_MODULE_ARMOR
