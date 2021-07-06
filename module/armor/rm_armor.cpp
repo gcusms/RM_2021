@@ -40,7 +40,7 @@ RM_ArmorDetector::RM_ArmorDetector(std::string _armor_config) {
 
   //装甲匹配参数初始化
   fs_armor["ARMOR_EDIT"] >> armor_config_.armor_edit;
-  fs_armor["armor_draw"] >> armor_config_.armor_draw;
+  fs_armor["ARMOR_DRAW"] >> armor_config_.armor_draw;
   fs_armor["ARMOR_HEIGHT_RATIO_MIN"] >> armor_config_.light_height_ratio_min;
   fs_armor["ARMOR_HEIGHT_RATIO_MAX"] >> armor_config_.light_height_ratio_max;
 
