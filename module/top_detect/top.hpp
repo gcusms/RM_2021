@@ -1,65 +1,57 @@
-#ifndef SHOOTTUOLUO_H
-#define SHOOTTUOLUO_H
-
+#include <iostream>
 #include <opencv2/opencv.hpp>
 
-#include "module/angle_solve/rm_solve_pnp.hpp"
 #include "module/armor/rm_armor.hpp"
-#include "module/filter/filter.hpp"
 
-//击打缓冲计算返回
-typedef struct {
-  float pitch;
-  float yaw;
-  float t;  //击打弹道时间
-  float angle;
-} Angle_t;
-
-//陀螺状态
-enum TopStatus {
-  STILL,   //静止
-  SWITCH,  //切换
-  RUN      //同块运动
+enum Top_Status {
+  /**
+   * @brief LEFT       左旋
+   * @brief RIGHT      右旋
+   * @brief STOP       停止
+   * @brief TRANSITION 过渡时期
+   */
+  STOP,
+  LEFT,
+  RIGHT,
+  TRANSITION,
 };
 
-//陀螺转动方向
-enum TopRunDirection { LEFT, RIGHT };
-//陀螺数据
-struct TopData {
-  bool isTuoluo = false;  //是否为陀螺
-  float R;                //半径
-  float angle;            //当前角度
-  cv::Point2f center;
-  TopStatus status;              //陀螺当前的状态
-  TopRunDirection runDirection;  //转动方向
-  float spinSpeed;               //角速度
+typedef struct Top_Data {
+  Top_Status status = STOP;  // 陀螺状态
+  int is_shooting = 0;       // 开火键
+  int shooting_cycle = 0;
+  int top_cycle = 0;            // 陀螺周期
+  float first_tan_angle = 0.f;  // 第一次检测tan角度
 };
 
-class ShootTuoluo {
+class Armor_Top {
  private:
-  double tz_armor_width_;
-  double tz_normal;
+  Top_Data top_data_;         //小陀螺状态
+  int count = 0;              //运行次数计数
+  int min_cycle_count = 10;   //最小周期
+  int max_cycle_count = 100;  //最大周期
+  int first_temp;             //第一次检测到位置
+  Top_Status status = STOP;
 
  public:
-  TopData getTuoluoData(cv::Mat Src, armor::Armor_Data BestArmor);
-  ShootTuoluo();
-
- private:
-  double getAngle(armor::Armor_Data BestArmor);
-  void firstSetTuoluo(double angle, armor::Armor_Data armor);
-  //第二种陀螺检测方案
-  bool ContinueSetTuoluo(cv::Mat Src, double& angle,
-                         armor::Armor_Data BestArmor, double& R,
-                         cv::Point2f& center, TopStatus& status,
-                         TopRunDirection& direction, float& spinSpeed);
-  void drawImage(cv::Mat Src, double angle, cv::Point2f object, double R,
-                 float armorWidth);
+  /**
+   * @brief 主函数
+   *
+   * @param _src_img 原图像
+   * @param
+   * @return Top_Data
+   */
+  Top_Status run_Top(cv::Mat &_src_img, armor::Armor_Data _armor_data);
+  /**
+   * @brief 小陀螺状态清零
+   *
+   */
+  void topStatusInitializ();
+  /**
+   * @brief 计数器清零
+   *
+   */
+  void countInitializ();
+  Armor_Top();
+  ~Armor_Top();
 };
-
-struct Angle_tz {
-  double angle = 90;
-  float tz = 0;
-  float r = 0;
-};
-
-#endif  // SHOOTTUOLUO_H

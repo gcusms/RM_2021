@@ -6,14 +6,14 @@ Connector::~Connector() {}
 
 void Connector::run() {
   mv_camera::RM_VideoCapture mv_capture_(mv_camera::CameraParam(
-      0, mv_camera::RESOLUTION_1280_X_800, mv_camera::EXPOSURE_600));
+      1, mv_camera::RESOLUTION_1280_X_800, mv_camera::EXPOSURE_600));
   angle_solve::RM_Solvepnp pnp_(
       "devices/camera/cameraParams/cameraParams_407.xml",
       "module/angle_solve/pnp_config.xml");
   armor::RM_ArmorDetector armor_("module/armor/armor_config.xml");
   serial_port::SerialPort serial_("devices/serial/serial_config.xml");
   cv::VideoCapture cap("/home/xx/下载/视频/效果图/armor_1.avi");
-  ShootTuoluo top;
+  Armor_Top top_;
   while (true) {
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
@@ -24,15 +24,16 @@ void Connector::run() {
       serial_.updateReceiveInformation();
       switch (serial_.returnReceiveMode()) {
         case serial_port::SUP_SHOOT:
-          if (armor_.run_Armor(src_img_, serial_.returnReceiceColor())) {
+          if (armor_.run_Armor(src_img_, 1)) {
             pnp_.run_Solvepnp(serial_.returnReceiveBulletVolacity(),
                               armor_.returnFinalArmorDistinguish(0),
                               armor_.returnFinalArmorRotatedRect(0));
-            armor_.set_Final_Armor_Tx(pnp_.returnTvecTx(), 0);
-            armor_.set_Final_Armor_Ty(pnp_.returnTvecTy(), 0);
-            armor_.set_Final_Armor_Tz(pnp_.returnTvecTz(), 0);
-            TopData a = top.getTuoluoData(src_img_, armor_.returnFinalArmor(0));
-            cout<<"isTop = "<<a.isTuoluo<<endl;
+            std::cout << "armor_data_.tan_angle = "
+                      << armor_.returnFinalArmor(0).tan_angle << std::endl;
+            Top_Status top_status =
+                top_.run_Top(src_img_, armor_.returnFinalArmor(0));
+            std::cout << "top_status = " << top_status * 11111111111
+                      << std::endl;
           }
 
           break;
