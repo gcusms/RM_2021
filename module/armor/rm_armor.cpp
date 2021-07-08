@@ -183,7 +183,7 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
         imshow("armor_draw_img", draw_img_);
         draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
       }
-      pnp_.run_Solvepnp(_receive_data.bullet_volacity, armor_[0].distinguish,
+      pnp_.run_Solvepnp(_receive_data.bullet_velocity, armor_[0].distinguish,
                         armor_[0].armor_rect);
     }
   }
@@ -280,7 +280,7 @@ bool RM_ArmorDetector::fitting_Armor() {
       if (error_angle < 10.0f) {
         armor_data_.tan_angle = atan(error_angle) * 180 / CV_PI;
         if (this->light_Judge(light_left, light_right)) {
-          if (this->average_Color() < 20) {
+          if (this->average_Color() < 100) {
             armor_.push_back(armor_data_);
             if (armor_config_.armor_draw == 1 ||
                 armor_config_.armor_edit == 1) {

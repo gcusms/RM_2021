@@ -119,8 +119,9 @@ SerialPort::~SerialPort(void) {
  *            Wcjjj
  */
 void SerialPort::rmReceiveData() {
-  memset(receive_buff_, '0', REC_INFO_LENGTH * 2);           //清空缓存
-  read(fd, receive_buff_temp_, sizeof(receive_buff_temp_));  //读取串口中的数据
+  memset(receive_buff_, '0', REC_INFO_LENGTH * 2);  //清空缓存
+  read_message_ = read(fd, receive_buff_temp_,
+                       sizeof(receive_buff_temp_));  //读取串口中的数据
   //对读取到的数据进行遍历排查，直到截取 'S' 开头和 'E'结尾的数据段后保存并退出
   for (int i = 0; i < (int)sizeof(receive_buff_temp_); ++i) {
     if (receive_buff_temp_[i] == 'S' &&
@@ -148,7 +149,7 @@ void SerialPort::rmReceiveData() {
       4~7:    yaw_angle(union)
       8~11:   pitch_angle(union)
       12~13:  acceleration 12:High 13:low
-      14:     bullet_volacity
+      14:     bullet_velocity
       15:     E
    */
   tcflush(fd, TCIFLUSH);
@@ -183,7 +184,7 @@ void SerialPort::rmSerialWrite(const int& _yaw, const int16_t& yaw,
   11：CRC
   12：帧尾
   */
-  write(fd, write_buff_, sizeof(write_buff_));
+  write_message_ = write(fd, write_buff_, sizeof(write_buff_));
 
   if (serial_config_.show_serial_information == 1) {
     yaw_reduction_ = mergeIntoBytes(
@@ -263,7 +264,7 @@ void SerialPort::rmSerialWrite(const Write_Data _write_data) {
                  _write_data.symbol_yaw, _write_data.yaw_angle,
                  _write_data.symbol_pitch, _write_data.pitch_angle,
                  _write_data.depth, CRC);
-  write(fd, write_buff_, sizeof(write_buff_));
+  write_message_ = write(fd, write_buff_, sizeof(write_buff_));
   if (serial_config_.show_serial_information == 1) {
     yaw_reduction_ = mergeIntoBytes(
         write_buff_[5], write_buff_[4]);  // TODO:测试传出的值是否正确
@@ -298,7 +299,7 @@ void SerialPort::rmSerialWrite() {
                  write_data_.symbol_yaw, write_data_.yaw_angle,
                  write_data_.symbol_pitch, write_data_.pitch_angle,
                  write_data_.depth, CRC);
-  write(fd, write_buff_, sizeof(write_buff_));
+  write_message_ = write(fd, write_buff_, sizeof(write_buff_));
   if (serial_config_.show_serial_information == 1) {
     yaw_reduction_ = mergeIntoBytes(
         write_buff_[5], write_buff_[4]);  // TODO:测试传出的值是否正确
@@ -486,19 +487,19 @@ void SerialPort::updateReceiveInformation() {
   // this->transform_arr_[3] = this->receive_buff_[14] - '0';
   // switch (this->transform_arr_[3]) {
   //   case 1:
-  //     this->receive_data_.bullet_volacity = 15;
+  //     this->receive_data_.bullet_velocity = 15;
   //     break;
   //   case 2:
-  //     this->receive_data_.bullet_volacity = 18;
+  //     this->receive_data_.bullet_velocity = 18;
   //     break;
   //   case 3:
-  //     this->receive_data_.bullet_volacity = 30;
+  //     this->receive_data_.bullet_velocity = 30;
   //     break;
   //   default:
-  //     this->receive_data_.bullet_volacity = 30;
+  //     this->receive_data_.bullet_velocity = 30;
   //     break;
   // }
-  this->receive_data_.bullet_volacity = this->receive_buff_[14];
+  this->receive_data_.bullet_velocity = this->receive_buff_[14];
   /* 4 5 6 7 更新陀螺仪的yaw角度值 */
   for (size_t i = 0;
        i < sizeof(this->receive_data_.Receive_Yaw_Angle_Info.arr_yaw_angle);
@@ -537,6 +538,6 @@ void SerialPort::displayReceiveInformation() {
             << " pitch:"
             << this->receive_data_.Receive_Pitch_Angle_Info.pitch_angle
             << " acceleration:" << this->receive_data_.acceleration
-            << " volacity:" << this->receive_data_.bullet_volacity << std::endl;
+            << " volacity:" << this->receive_data_.bullet_velocity << std::endl;
 }
 }  // namespace serial_port
