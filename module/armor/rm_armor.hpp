@@ -4,23 +4,16 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 
+#include "devices/serial/rm_serial_port.hpp"
+#include "module/angle_solve/rm_solve_pnp.hpp"
+
+angle_solve::RM_Solvepnp pnp_(
+    "devices/camera/cameraParams/cameraParams_407.xml",
+    "module/angle_solve/pnp_config.xml");
+serial_port::SerialPort serial_("devices/serial/serial_config.xml");
 namespace armor {
-//射击模式
-enum Shooting_Mode {
-  FirstFind,  //首次识别
-  Shoot,      //连续射击
-  stop,       // stop
-  buffering   //缓冲
-};
 typedef struct Armor_Data {
   cv::RotatedRect armor_rect;
-  //角度结算旋转向量
-  float tx = 0;
-  float ty = 0;
-  float tz = 0;
-  bool is_top = false;  //是否为陀螺状态
-  float top_width = 0.0f;
-  Shooting_Mode shooting_status = stop;
   float width = 0;              ///装甲板宽度
   float height = 0;             ///装甲板高度
   float aspect_ratio = 0;       ///装甲板宽高比
@@ -39,6 +32,7 @@ typedef struct Armor_Data {
   float light_width_aspect = 0;   ///左灯条宽和右灯条宽比值
 
   int distinguish = 0;  ///大小装甲板 小0 大1
+  serial_port::Write_Data write_data_;
 };
 
 typedef struct Armor_Cfg {
@@ -104,7 +98,8 @@ typedef struct Image_Cfg {
 class RM_ArmorDetector {
   //装甲板
  public:
-  bool run_Armor(cv::Mat &_src_img, int my_color);
+  serial_port::Write_Data run_Armor(cv::Mat &_src_img,
+                                    serial_port::Receive_Data _receive_data);
   bool light_Judge(int i, int j);  //判断左右灯条能否组成装甲板
   int average_Color();             //计算图像颜色平均值
   bool fitting_Armor();            //拟合装甲板
@@ -113,15 +108,7 @@ class RM_ArmorDetector {
   void free_Memory();              //释放内存
   int motion_Direction();          //判断装甲板运动方向
   inline Armor_Data returnFinalArmor(int _num) { return armor_[_num]; }
-  inline void set_Final_Armor_Tx(double _tx, int _num) {
-    armor_[_num].tx = _tx;
-  }
-  inline void set_Final_Armor_Ty(double _ty, int _num) {
-    armor_[_num].ty = _ty;
-  }
-  inline void set_Final_Armor_Tz(double _tz, int _num) {
-    armor_[_num].tz = _tz;
-  }
+
   /**
    * @brief 指定返回已排序后第几个装甲板的参数
    *
@@ -134,9 +121,11 @@ class RM_ArmorDetector {
     return armor_[_num].distinguish;
   }
   inline int returnArmornum() { return armor_.size(); };
+
   RM_ArmorDetector() {}
   RM_ArmorDetector(std::string _armor_config);
   ~RM_ArmorDetector() {}
+
   inline bool returnSuccessArmor() { return armor_success; }
 
  private:

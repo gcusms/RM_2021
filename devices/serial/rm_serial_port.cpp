@@ -119,7 +119,7 @@ SerialPort::~SerialPort(void) {
  *            Wcjjj
  */
 void SerialPort::rmReceiveData() {
-  memset(receive_buff_, '0', REC_INFO_LENGTH*2);               //清空缓存
+  memset(receive_buff_, '0', REC_INFO_LENGTH * 2);           //清空缓存
   read(fd, receive_buff_temp_, sizeof(receive_buff_temp_));  //读取串口中的数据
   //对读取到的数据进行遍历排查，直到截取 'S' 开头和 'E'结尾的数据段后保存并退出
   for (int i = 0; i < (int)sizeof(receive_buff_temp_); ++i) {
@@ -229,6 +229,64 @@ void SerialPort::updataWriteData(const float _yaw, const float _pitch,
   write_data_.data_type = _data_type;
   write_data_.is_shooting = _is_shooting;
   rmSerialWrite();
+}
+
+Write_Data SerialPort::gainWriteData(const float _yaw, const float _pitch,
+                                     const int _depth, int _data_type,
+                                     const int _is_shooting) {
+  Write_Data write_data;
+  write_data.symbol_yaw = 0;
+  if (_yaw >= 0) {
+    write_data.symbol_yaw = 1;
+  }
+  write_data.symbol_pitch = 0;
+  if (_pitch >= 0) {
+    write_data.symbol_pitch = 1;
+  }
+  if (_data_type > 1) {
+    _data_type = 1;
+  }
+  write_data.yaw_angle = fabs(_yaw) * 100;
+  write_data.pitch_angle = fabs(_pitch) * 100;
+  write_data.depth = _depth;
+  write_data.data_type = _data_type;
+  write_data.is_shooting = _is_shooting;
+  return write_data;
+}
+void SerialPort::rmSerialWrite(const Write_Data _write_data) {
+  getDataForCrc(_write_data.data_type, _write_data.is_shooting,
+                _write_data.symbol_yaw, _write_data.yaw_angle,
+                _write_data.symbol_pitch, _write_data.pitch_angle,
+                _write_data.depth);
+  uint8_t CRC = checksumCrc(crc_buff_, sizeof(crc_buff_));
+  getDataForSend(_write_data.data_type, _write_data.is_shooting,
+                 _write_data.symbol_yaw, _write_data.yaw_angle,
+                 _write_data.symbol_pitch, _write_data.pitch_angle,
+                 _write_data.depth, CRC);
+  write(fd, write_buff_, sizeof(write_buff_));
+  if (serial_config_.show_serial_information == 1) {
+    yaw_reduction_ = mergeIntoBytes(
+        write_buff_[5], write_buff_[4]);  // TODO:测试传出的值是否正确
+
+    pitch_reduction_ = mergeIntoBytes(write_buff_[8], write_buff_[7]);
+
+    depth_reduction_ = mergeIntoBytes(write_buff_[10], write_buff_[9]);
+
+    std::cout << "write_buff_=  " << write_buff_[0] << "  "
+              << static_cast<int>(write_buff_[1]) << "  "
+              << static_cast<int>(write_buff_[2]) << "  "
+              << static_cast<int>(write_buff_[3]) << "  "
+              << float(yaw_reduction_) / 100 << "  "
+              << static_cast<int>(write_buff_[6]) << "  "
+              << float(pitch_reduction_) / 100 << "  "
+              << float(depth_reduction_) << "  "
+              << static_cast<int>(write_buff_[11]) << "  " << write_buff_[12]
+              << std::endl;
+
+    yaw_reduction_ = 0x0000;  // TODO:测试上述转换方法可行之后看看是否可以去除
+    pitch_reduction_ = 0x0000;
+    depth_reduction_ = 0x0000;
+  }
 }
 void SerialPort::rmSerialWrite() {
   getDataForCrc(write_data_.data_type, write_data_.is_shooting,

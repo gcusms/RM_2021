@@ -28,6 +28,7 @@ class RM_Solvepnp : public Abstract_Solvepnp {
  public:
   RM_Solvepnp(std::string _camera_path, std::string _pnp_config_path);
   RM_Solvepnp();
+  ~RM_Solvepnp();
 
   inline float returnYawAngle() { return solvepnp_info_.yaw_angle; }
   inline float returnPitchAngle() { return solvepnp_info_.pitch_angle; }
@@ -35,26 +36,15 @@ class RM_Solvepnp : public Abstract_Solvepnp {
   inline double returnTvecTx() { return tvec_.ptr<double>(0)[0]; }
   inline double returnTvecTy() { return tvec_.ptr<double>(0)[1]; }
   inline double returnTvecTz() { return tvec_.ptr<double>(0)[2]; }
-  void run_Solvepnp(int _ballet_speed, int _armor_type, cv::RotatedRect _rect,
-                    int _depth);
-
-  void run_Solvepnp(int _ballet_speed, int _armor_type,
-                    std::vector<cv::Point2f> _target_2d, int _depth);
-
-  void run_Solvepnp(int _ballet_speed, int _armor_type, cv::Mat &_src_img,
-                    std::vector<cv::Point2f> _target_2d);
-
-  void run_Solvepnp(int _ballet_speed, int _armor_type,
-                    std::vector<cv::Point2f> _target_2d);
-
-  void run_Solvepnp(int _ballet_speed, int _width, int _height,
-                    cv::Mat &_src_img, cv::RotatedRect _rect);
 
   void run_Solvepnp(int _ballet_speed, int _armor_type, cv::Mat &_src_img,
                     cv::RotatedRect _rect);
 
   void run_Solvepnp(int _ballet_speed, int _armor_type, cv::Mat &_src_img,
                     cv::Rect _rect);
+
+  void run_Solvepnp(int _ballet_speed, int _width, int _height,
+                    cv::Mat &_src_img, cv::RotatedRect _rect);
 
   void run_Solvepnp(int _ballet_speed, int _width, int _height,
                     cv::Mat &_src_img, cv::Rect _rect);
@@ -67,7 +57,18 @@ class RM_Solvepnp : public Abstract_Solvepnp {
   void run_Solvepnp(int _ballet_speed, int _armor_type, cv::Rect _rect);
 
   void run_Solvepnp(int _ballet_speed, int _width, int _height, cv::Rect _rect);
-  ~RM_Solvepnp();
+
+  void run_Solvepnp(int _ballet_speed, int _armor_type, cv::RotatedRect _rect,
+                    int _depth);
+
+  void run_Solvepnp(int _ballet_speed, int _armor_type,
+                    std::vector<cv::Point2f> _target_2d, int _depth);
+
+  void run_Solvepnp(int _ballet_speed, int _armor_type, cv::Mat &_src_img,
+                    std::vector<cv::Point2f> _target_2d);
+
+  void run_Solvepnp(int _ballet_speed, int _armor_type,
+                    std::vector<cv::Point2f> _target_2d);
 };
 }  // namespace angle_solve
 #endif

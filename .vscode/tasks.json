@@ -23,7 +23,7 @@
 			"-I","${workspaceFolder}/devices/camera",
 			"-I","${workspaceFolder}/module/roi",
 			"-I","${workspaceFolder}/module/filter",
-			"-I","${workspaceFolder}/module/top_detect",
+			// "-I","${workspaceFolder}/module/top_detect",
 			"-I","${workspaceFolder}/base",
 			"-I","/usr/local/include",
 			"-I","/usr/local/include/opencv4",
@@ -37,7 +37,7 @@
 			"${workspaceFolder}/devices/camera/rm_video_capture.cpp",
 			"${workspaceFolder}/module/roi/rm_roi.cpp",
 			"${workspaceFolder}/module/filter/filter.cpp",
-			"${workspaceFolder}/module/top_detect/top.cpp",
+			// "${workspaceFolder}/module/top_detect/top.cpp",
 			"${workspaceFolder}/base/connector.cpp",
 			"${workspaceFolder}/user/main.cpp",/* ${workspaceFolder}表⽰路径从当前项⽬⽂件夹开始 */
 			"-o", /* 编译输出⽂件的存放路径 */

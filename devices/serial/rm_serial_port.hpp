@@ -165,6 +165,7 @@ class SerialPort {
   /** ---------- 函数声明 ---------- **/
   SerialPort(std::string _serial_config);
   ~SerialPort();
+  inline Receive_Data returnReceive() { return receive_data_; }
 
   inline float returnReceiveAcceleration() {
     return receive_data_.acceleration;
@@ -204,8 +205,12 @@ class SerialPort {
                      const int16_t& pitch, const int16_t& depth,
                      const int& data_type = 0, const int& is_shooting = 0);
   void rmSerialWrite();
+  void rmSerialWrite(const Write_Data _write_data);
   void updataWriteData(const float _yaw, const float _pitch, const int _depth,
                        int _data_type = 0, const int _is_shooting = 0);
+  Write_Data gainWriteData(const float _yaw, const float _pitch,
+                           const int _depth, int _data_type = 0,
+                           const int _is_shooting = 0);
   void displayReceiveInformation();
   //接收并处理串口数据
   void rmReceiveData();

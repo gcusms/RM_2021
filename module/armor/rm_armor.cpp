@@ -170,9 +170,10 @@ bool RM_ArmorDetector::find_Light() {
  * @return true 正确得到装甲板
  * @return false 无法得到装甲板
  */
-bool RM_ArmorDetector::run_Armor(cv::Mat &_src_img, int _my_color) {
+serial_port::Write_Data RM_ArmorDetector::run_Armor(
+    cv::Mat &_src_img, serial_port::Receive_Data _receive_data) {
   //图像处理
-  run_Image(_src_img, _my_color);
+  run_Image(_src_img, _receive_data.my_color);
   draw_img_ = _src_img;
   if (find_Light()) {
     if (fitting_Armor()) {
@@ -182,7 +183,8 @@ bool RM_ArmorDetector::run_Armor(cv::Mat &_src_img, int _my_color) {
         imshow("armor_draw_img", draw_img_);
         draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
       }
-      return true;
+      pnp_.run_Solvepnp(_receive_data.bullet_volacity, armor_[0].distinguish,
+                        armor_[0].armor_rect);
     }
   }
   if (armor_config_.armor_draw == 1 || light_config_.light_draw == 1 ||
@@ -190,7 +192,6 @@ bool RM_ArmorDetector::run_Armor(cv::Mat &_src_img, int _my_color) {
     imshow("armor_draw_img", draw_img_);
     draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
-  return false;
 }
 /**
  * @brief 判断大小
