@@ -7,12 +7,11 @@ Connector::~Connector() {}
 void Connector::run() {
   mv_camera::RM_VideoCapture mv_capture_(mv_camera::CameraParam(
       0, mv_camera::RESOLUTION_1280_X_800, mv_camera::EXPOSURE_600));
-  angle_solve::RM_Solvepnp pnp_(
-      "devices/camera/cameraParams/cameraParams_407.xml",
-      "module/angle_solve/pnp_config.xml");
   armor::RM_ArmorDetector armor_("module/armor/armor_config.xml");
   serial_port::SerialPort serial_("devices/serial/serial_config.xml");
   cv::VideoCapture cap("/home/xx/下载/视频/效果图/armor_1.avi");
+  buff::RM_Buff buff ("module/RM_Buff/Config/buff_config.xml");
+
   while (true) {
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();

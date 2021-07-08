@@ -69,16 +69,16 @@ typedef struct Serial_Config {
  * @param:  my_color              描述己方颜色信息
  * @param:  now_run_mode          描述运行模式信息
  * @param:  my_robot_id           描述当前机器人ID信息
- * @param:  bullet_volacity       描述当前机器人子弹速度
+ * @param:  bullet_velocity       描述当前机器人子弹速度
  * @param:  acceleration          描述陀螺仪角加速度 .00
  * @param:  yaw_angle             描述陀螺仪的yaw轴角度（有符号）
  * @param:  pitch_angle           描述陀螺仪的pitch轴角度（有符号）
  */
-typedef struct Receive_Data {
+struct Receive_Data {
   int my_color;
   int now_run_mode;
   int my_robot_id;
-  int bullet_volacity;
+  int bullet_velocity;
   float acceleration;
 
   union Receive_Yaw_Angle_Information {
@@ -98,7 +98,7 @@ typedef struct Receive_Data {
     Receive_Yaw_Angle_Info.yaw_angle = 0.f;
     Receive_Pitch_Angle_Info.pitch_angle = 0.f;
     acceleration = 0.f;
-    bullet_volacity = 30;
+    bullet_velocity = 30;
   }
 };
 /**
@@ -112,7 +112,7 @@ typedef struct Receive_Data {
  * @param:  data_type         是否发现目标：1->发现 0->未发现
  * @param:  depth             深度信息
  */
-typedef struct Write_Data {
+struct Write_Data {
   int symbol_yaw;
   int symbol_pitch;
   int depth;
@@ -120,6 +120,15 @@ typedef struct Write_Data {
   int data_type;
   float yaw_angle;
   float pitch_angle;
+  Write_Data() {
+     symbol_yaw =0;
+     symbol_pitch =0;
+     depth =0;
+     is_shooting =0;
+     data_type =0;
+     yaw_angle =0.f;
+     pitch_angle =0.f;
+  }
 };
 
 class SerialPort {
@@ -149,6 +158,10 @@ class SerialPort {
   unsigned char exchangebyte_;
   int16_t exchangebit_;
 
+  //接收反馈信息
+  ssize_t read_message_;
+  ssize_t write_message_;
+
   /** ---------- 函数声明 ---------- **/
   // CRC校验函数
   uint8_t checksumCrc(unsigned char* buf, uint16_t len);
@@ -170,8 +183,8 @@ class SerialPort {
   inline float returnReceiveAcceleration() {
     return receive_data_.acceleration;
   }
-  inline int returnReceiveBulletVolacity() {
-    return receive_data_.bullet_volacity;
+  inline int returnReceiveBulletVelocity() {
+    return receive_data_.bullet_velocity;
   }
   inline int returnReceiveRobotId() { return receive_data_.my_robot_id; }
   inline int returnReceiceColor() { return receive_data_.my_color; }
