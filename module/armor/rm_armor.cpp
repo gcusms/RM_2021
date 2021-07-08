@@ -40,7 +40,7 @@ RM_ArmorDetector::RM_ArmorDetector(std::string _armor_config) {
 
   //装甲匹配参数初始化
   fs_armor["ARMOR_EDIT"] >> armor_config_.armor_edit;
-  fs_armor["armor_draw"] >> armor_config_.armor_draw;
+  fs_armor["ARMOR_DRAW"] >> armor_config_.armor_draw;
   fs_armor["ARMOR_HEIGHT_RATIO_MIN"] >> armor_config_.light_height_ratio_min;
   fs_armor["ARMOR_HEIGHT_RATIO_MAX"] >> armor_config_.light_height_ratio_max;
 
@@ -210,15 +210,12 @@ bool comparison(Armor_Data _a, Armor_Data _b) {
  */
 void RM_ArmorDetector::final_Armor() {
   armor_success = true;
-  if (armor_.size() == 1) {
-    std::cout << "只有一个装甲板" << std::endl;
-  } else {
-    std::cout << "有多个装甲板" << std::endl;
-    std::sort(armor_.begin(), armor_.end(), comparison);
-    if (armor_config_.armor_draw == 1 || armor_config_.armor_edit == 1) {
-      cv::rectangle(draw_img_, armor_[0].armor_rect.boundingRect(),
-                    cv::Scalar(0, 255, 0), 3, 8);
-    }
+
+  std::cout << "有多个装甲板" << std::endl;
+  std::sort(armor_.begin(), armor_.end(), comparison);
+  if (armor_config_.armor_draw == 1 || armor_config_.armor_edit == 1) {
+    cv::rectangle(draw_img_, armor_[0].armor_rect.boundingRect(),
+                  cv::Scalar(0, 255, 0), 3, 8);
   }
 }
 
@@ -279,13 +276,13 @@ bool RM_ArmorDetector::fitting_Armor() {
       if (error_angle < 10.0f) {
         armor_data_.tan_angle = atan(error_angle) * 180 / CV_PI;
         if (this->light_Judge(light_left, light_right)) {
-          if (this->average_Color() < 20) {
+          if (this->average_Color() < 100) {
             armor_.push_back(armor_data_);
             if (armor_config_.armor_draw == 1 ||
                 armor_config_.armor_edit == 1) {
               //绘制所有装甲板
               rectangle(draw_img_, armor_data_.armor_rect.boundingRect(),
-                        cv::Scalar(255, 255, 0), 5, 8);
+                        cv::Scalar(0, 0, 255), 5, 8);
             }
           }
         }
@@ -397,7 +394,6 @@ int RM_ArmorDetector::average_Color() {
               (armor_data_.left_light_width + armor_data_.right_light_width),
           (armor_data_.left_light_height + armor_data_.right_light_height) / 2),
       armor_data_.tan_angle);
-  cv::rectangle(draw_img_, rects.boundingRect(), cv::Scalar(0, 0, 255), 3, 8);
   armor_data_.armor_rect = rects;  //储存装甲板旋转矩形
   cv::Rect _rect = rects.boundingRect();
   if (_rect.x <= 0) {

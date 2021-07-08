@@ -28,10 +28,8 @@ void Connector::run() {
             pnp_.run_Solvepnp(serial_.returnReceiveBulletVolacity(),
                               armor_.returnFinalArmorDistinguish(0),
                               armor_.returnFinalArmorRotatedRect(0));
-            std::cout << "armor_data_.tan_angle = "
-                      << armor_.returnFinalArmor(0).tan_angle << std::endl;
             Top_Status top_status =
-                top_.run_Top(src_img_, armor_.returnFinalArmor(0));
+                top_.run_Top(src_img_, pnp_.returnYawAngle());
             std::cout << "top_status = " << top_status * 11111111111
                       << std::endl;
           }
@@ -65,6 +63,7 @@ void Connector::run() {
 
           break;
       }
+
       serial_.updataWriteData(pnp_.returnYawAngle(), pnp_.returnPitchAngle(),
                               pnp_.returnDepth(), armor_.returnArmornum(), 0);
       mv_capture_.cameraReleasebuff();
