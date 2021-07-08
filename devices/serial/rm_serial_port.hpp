@@ -178,7 +178,7 @@ class SerialPort {
   inline float returnReceivePitch() {
     return receive_data_.Receive_Pitch_Angle_Info.pitch_angle;
   }
-  inline float receiveYaw() {
+  inline float returnReceiveYaw() {
     return receive_data_.Receive_Yaw_Angle_Info.yaw_angle;
   }
 
