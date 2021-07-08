@@ -22,7 +22,7 @@ void FanBlade::displayFanBlade(cv::Mat& _img)
   cv::putText(_img, " Fan Blade ", put_fan_blade, cv::FONT_HERSHEY_PLAIN, 1, color, 1, 8, false);
 
   for (int k = 0; k < 4; ++k) {
-    cv::line(_img, this->vertex_[k], this->vertex_[(k + 1) % 4], color, 2);
+    cv::line(_img, this->vertex_[k], this->vertex_[(k + 1) % 4], color, 4);
   }
 }
 }  // namespace buff

@@ -1,4 +1,4 @@
-#include "modules/RM_Buff/RM_Buff.hpp"
+#include "module/RM_Buff/RM_Buff.hpp"
 
 namespace buff {
 RM_Buff::RM_Buff(const std::string& _buff_config_address)
@@ -18,7 +18,7 @@ RM_Buff::RM_Buff(const std::string& _buff_config_address)
   average_th_ = 0;
 
   /* 查找目标 */
-  inaction_cnt_ = 0;
+  action_cnt_ = 0;
   small_rect_area_ = 0.f;
   small_rect_length_ = 0.f;
   big_rect_area_ = 0.f;
@@ -44,6 +44,7 @@ RM_Buff::RM_Buff(const std::string& _buff_config_address)
   diff_angle_ = 0.f;
 
   current_direction_ = 0.f;
+  last_direction_ = 0.f;
   find_cnt_ = 0;
   d_angle_ = 1.f;
   confirm_cnt_ = 0;
@@ -82,8 +83,8 @@ RM_Buff::RM_Buff(const std::string& _buff_config_address)
 
 RM_Buff::~RM_Buff() {}
 
-void RM_Buff::runTask(Mat& _input_img, Receive_Info& _receive_info,
-                      Send_Info& _send_info) {
+void RM_Buff::runTask(Mat& _input_img, serial_port::Receive_Data& _receive_info,
+                      serial_port::Write_Data& _send_info) {
   /* 获取基本信息 */
   Input(_input_img, _receive_info.my_color);
 
@@ -107,8 +108,8 @@ void RM_Buff::runTask(Mat& _input_img, Receive_Info& _receive_info,
   this->final_forecast_quantity_ = Predict(
       static_cast<float>(_receive_info.bullet_velocity), this->is_find_target_);
 
-  cout << "测试 提前了" << final_forecast_quantity_ * 180 / CV_PI << "度"
-       << endl;
+  std::cout << "测试 提前了" << final_forecast_quantity_ * 180 / CV_PI << "度"
+            << std::endl;
 
   /* 计算获取最终目标（矩形、顶点） */
   this->calculateTargetPointSet(this->final_forecast_quantity_,
@@ -119,16 +120,16 @@ void RM_Buff::runTask(Mat& _input_img, Receive_Info& _receive_info,
   if (is_find_target_) {
     /* 计算云台角度 */
     this->buff_pnp_.run_Solvepnp(_receive_info.bullet_velocity, 2,
-                                 this->dst_img_, this->target_2d_point_,
+                                 /* this->dst_img_,  */ this->target_2d_point_,
                                  target_z_);
-    _send_info.angle_yaw = this->buff_pnp_.returnYawAngle();
-    _send_info.angle_pitch = buff_pnp_.returnPitchAngle();
+    _send_info.yaw_angle = this->buff_pnp_.returnYawAngle();
+    _send_info.pitch_angle = buff_pnp_.returnPitchAngle();
     _send_info.depth = buff_pnp_.returnDepth();
-    std::cout << " yaw:" << _send_info.angle_yaw
-              << " pitch:" << _send_info.angle_pitch
+    std::cout << " yaw:" << _send_info.yaw_angle
+              << " pitch:" << _send_info.pitch_angle
               << " depth:" << _send_info.depth << std::endl;
   } else {
-    _send_info = Send_Info();
+    _send_info = serial_port::Write_Data();
   }
 
   /* TODO:自动控制 */
@@ -141,66 +142,9 @@ void RM_Buff::runTask(Mat& _input_img, Receive_Info& _receive_info,
   /* 输入串口数据 */
 }
 
-void RM_Buff::runTask(Mat& _input_img, RM_Messenger* _messenger) {
-  /* 获取基本信息 */
-  Input(_input_img, _messenger->getReceiveInfo().my_color);
-
-  /* 预处理 */
-  imageProcessing(this->src_img_, this->bin_img_, this->my_color_, BGR_MODE);
-
-  /* 查找目标 */
-  findTarget(this->dst_img_, this->bin_img_, this->target_box_);
-
-  /* 判断目标是否为空 */
-  this->is_find_target_ = isFindTarget(this->dst_img_, this->target_box_);
-  _messenger->getSendInfo().is_found_target =
-      this->is_find_target_;  // TODO:待改进为内嵌赋值，而不是外漏
-
-  /* 查找圆心 */
-  this->final_center_r_ = findCircleR(this->src_img_, this->bin_img_,
-                                      this->dst_img_, this->is_find_target_);
-
-  /* 计算运转状态值：速度、方向、角度 */
-  this->judgeCondition(is_find_target_);
-
-  /* 计算预测量 单位为弧度 */
-  this->final_forecast_quantity_ =
-      Predict(static_cast<float>(_messenger->getReceiveInfo().bullet_velocity),
-              this->is_find_target_);
-
-  cout << "测试 提前了" << final_forecast_quantity_ * 180 / CV_PI << "度"
-       << endl;
-
-  /* 计算获取最终目标（矩形、顶点） */
-  this->calculateTargetPointSet(this->final_forecast_quantity_,
-                                this->final_center_r_, this->target_2d_point_,
-                                this->dst_img_, this->is_find_target_);
-
-  if (is_find_target_) {
-    /* 计算云台角度 */
-
-    this->buff_pnp_.run_Solvepnp(_messenger->getReceiveInfo().bullet_velocity,
-                                 2, this->dst_img_, this->target_2d_point_,
-                                 target_z_);
-    _messenger->getSendInfo().angle_yaw = this->buff_pnp_.returnYawAngle();
-    _messenger->getSendInfo().angle_pitch = buff_pnp_.returnPitchAngle();
-    _messenger->getSendInfo().depth = buff_pnp_.returnDepth();
-    std::cout << " yaw:" << _messenger->getSendInfo().angle_yaw
-              << " pitch:" << _messenger->getSendInfo().angle_pitch
-              << " depth:" << _messenger->getSendInfo().depth << std::endl;
-  } else {
-    _messenger->setSendLostInfo();
-  }
-  /* TODO:自动控制 */
-
-  this->displayDst();
-
-  /* 更新上一帧数据 */
-  this->updateLastData(is_find_target_);
-}
-
-Send_Info RM_Buff::runTask(Mat& _input_img, Receive_Info& _receive_info) {
-  Send_Info send_info;
+serial_port::Write_Data RM_Buff::runTask(
+    Mat& _input_img, serial_port::Receive_Data& _receive_info) {
+  serial_port::Write_Data send_info;
 
   /* 获取基本信息 */
   Input(_input_img, _receive_info.my_color);
@@ -225,8 +169,8 @@ Send_Info RM_Buff::runTask(Mat& _input_img, Receive_Info& _receive_info) {
   this->final_forecast_quantity_ = Predict(
       static_cast<float>(_receive_info.bullet_velocity), this->is_find_target_);
 
-  cout << "测试 提前了" << final_forecast_quantity_ * 180 / CV_PI << "度"
-       << endl;
+  std::cout << "测试 提前了" << final_forecast_quantity_ * 180 / CV_PI << "度"
+            << std::endl;
 
   /* 计算获取最终目标（矩形、顶点） */
   this->calculateTargetPointSet(this->final_forecast_quantity_,
@@ -237,16 +181,16 @@ Send_Info RM_Buff::runTask(Mat& _input_img, Receive_Info& _receive_info) {
   if (is_find_target_) {
     /* 计算云台角度 */
     this->buff_pnp_.run_Solvepnp(_receive_info.bullet_velocity, 2,
-                                 this->dst_img_, this->target_2d_point_,
+                                 /* this->dst_img_,  */ this->target_2d_point_,
                                  target_z_);
-    send_info.angle_yaw = this->buff_pnp_.returnYawAngle();
-    send_info.angle_pitch = buff_pnp_.returnPitchAngle();
+    send_info.yaw_angle = this->buff_pnp_.returnYawAngle();
+    send_info.pitch_angle = buff_pnp_.returnPitchAngle();
     send_info.depth = buff_pnp_.returnDepth();
-    std::cout << " yaw:" << send_info.angle_yaw
-              << " pitch:" << send_info.angle_pitch
+    std::cout << " yaw:" << send_info.yaw_angle
+              << " pitch:" << send_info.pitch_angle
               << " depth:" << send_info.depth << std::endl;
   } else {
-    send_info = Send_Info();
+    send_info = serial_port::Write_Data();
   }
 
   /* TODO:自动控制 */
@@ -322,7 +266,10 @@ void RM_Buff::readBuffConfig(const cv::FileStorage& _fs) {
   _fs["BIG_LENTH_R"] >> this->buff_config_.param.BIG_LENTH_R;
 
   _fs["CENTER_R_ROI_SIZE"] >> this->buff_config_.param.CENTER_R_ROI_SIZE;
-  //
+
+  // filter coefficient
+  _fs["FILTER_COEFFICIENT"] >> this->buff_config_.param.FILTER_COEFFICIENT;
+
   // 能量机关打击模型参数
   _fs["BUFF_H"] >> this->buff_config_.param.BUFF_H;
   _fs["BUFF_RADIUS"] >> this->buff_config_.param.BUFF_RADIUS;
@@ -331,7 +278,9 @@ void RM_Buff::readBuffConfig(const cv::FileStorage& _fs) {
   _fs["TARGET_X"] >> this->buff_config_.param.TARGET_X;
 
   // 输出提示
-  std::cout << "✔️ ✔️ ✔️ 🌈 能量机关初始化参数 读取成功 🌈 ✔️ "
+  std::cout << "✔️ ✔️ ✔️ 🌈 能量机关初始化参数 读取成功 "
+               "🌈 "
+               "✔️ "
                "✔️ "
                "✔️"
             << std::endl;
@@ -347,21 +296,21 @@ void RM_Buff::imageProcessing(Mat& _input_img, Mat& _output_img,
   // switch (this->buff_config_.ctrl.PROCESSING_MODE) {
   switch (_process_moudle) {
     case BGR_MODE: {
-      cout << "+++ BGR MODOL +++" << endl;
+      std::cout << "+++ BGR MODOL +++" << std::endl;
 
       this->bgrProcessing(_my_color);
 
       break;
     }
     case HSV_MODE: {
-      cout << "--- HSV MODOL ---" << endl;
+      std::cout << "--- HSV MODOL ---" << std::endl;
 
       this->hsvProcessing(_my_color);
 
       break;
     }
     default: {
-      cout << "=== DEFAULT MODOL ===" << endl;
+      std::cout << "=== DEFAULT MODOL ===" << std::endl;
 
       this->bgrProcessing(_my_color);
 
@@ -399,8 +348,8 @@ void RM_Buff::bgrProcessing(const int& _my_color) {
 
   // 选择颜色
   switch (_my_color) {
-    case RED: {
-      cout << "My color is red!" << endl;
+    case serial_port::RED: {
+      std::cout << "My color is red!" << std::endl;
 
       /* my_color为红色，则处理红色的情况 */
       /* 灰度图与RGB同样做红色处理 */
@@ -416,7 +365,8 @@ void RM_Buff::bgrProcessing(const int& _my_color) {
                        &this->buff_config_.param.RED_BUFF_COLOR_TH, 255,
                        nullptr);
         imshow("trackbar", trackbar_img_);
-        cout << "🧐 BGR红色预处理调参面板已打开 🧐" << endl;
+        std::cout << "🧐 BGR红色预处理调参面板已打开 🧐"
+                  << std::endl;
       }
 
 #endif  // !RELEASE
@@ -431,8 +381,8 @@ void RM_Buff::bgrProcessing(const int& _my_color) {
 
       break;
     }
-    case BLUE: {
-      cout << "My color is blue!" << endl;
+    case serial_port::BLUE: {
+      std::cout << "My color is blue!" << std::endl;
 
       /* my_color为蓝色，则处理蓝色的情况 */
       /* 灰度图与RGB同样做蓝色处理 */
@@ -448,7 +398,8 @@ void RM_Buff::bgrProcessing(const int& _my_color) {
                        &this->buff_config_.param.BLUE_BUFF_COLOR_TH, 255,
                        nullptr);
         imshow("trackbar", trackbar_img_);
-        cout << "🧐 BGR蓝色预处理调参面板已打开 🧐" << endl;
+        std::cout << "🧐 BGR蓝色预处理调参面板已打开 🧐"
+                  << std::endl;
       }
 #endif  // !RELEASE
 
@@ -464,7 +415,7 @@ void RM_Buff::bgrProcessing(const int& _my_color) {
       break;
     }
     default: {
-      cout << "My color is default!" << endl;
+      std::cout << "My color is default!" << std::endl;
 
       subtract(this->split_img_[0], this->split_img_[2],
                bin_img_color1_);  // b-r
@@ -487,7 +438,8 @@ void RM_Buff::bgrProcessing(const int& _my_color) {
                        &this->buff_config_.param.BLUE_BUFF_COLOR_TH, 255,
                        nullptr);
         imshow("trackbar", trackbar_img_);
-        cout << "🧐 BGR通用预处理调参面板已打开 🧐" << endl;
+        std::cout << "🧐 BGR通用预处理调参面板已打开 🧐"
+                  << std::endl;
       }
 #endif  // !RELEASE
 
@@ -514,16 +466,16 @@ void RM_Buff::bgrProcessing(const int& _my_color) {
   }
 
   split_img_.clear();
-  vector<Mat>(split_img_).swap(split_img_);  // TODO:查看容量有多大
+  std::vector<Mat>(split_img_).swap(split_img_);  // TODO:查看容量有多大
 }
 
 void RM_Buff::hsvProcessing(const int& _my_color) {
   cvtColor(this->src_img_, this->hsv_img_, COLOR_BGR2HSV_FULL);
 
   switch (_my_color) {
-    case RED:
+    case serial_port::RED:
 
-      cout << "My color is red!" << endl;
+      std::cout << "My color is red!" << std::endl;
 #ifndef RELEASE
       if (this->buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
         namedWindow("trackbar");
@@ -543,7 +495,8 @@ void RM_Buff::hsvProcessing(const int& _my_color) {
         createTrackbar("V_RED_MIN:", "trackbar",
                        &this->buff_config_.param.V_RED_MIN, 255, nullptr);
         imshow("trackbar", trackbar_img_);
-        cout << "🧐 HSV红色预处理调参面板已打开 🧐" << endl;
+        std::cout << "🧐 HSV红色预处理调参面板已打开 🧐"
+                  << std::endl;
       }
 #endif  // !RELEASE
 
@@ -563,9 +516,9 @@ void RM_Buff::hsvProcessing(const int& _my_color) {
                 this->buff_config_.param.RED_BUFF_GRAY_TH, 255, THRESH_BINARY);
 
       break;
-    case BLUE:
+    case serial_port::BLUE:
 
-      cout << "My color is blue!" << endl;
+      std::cout << "My color is blue!" << std::endl;
 
 #ifndef RELEASE
       if (this->buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
@@ -586,7 +539,8 @@ void RM_Buff::hsvProcessing(const int& _my_color) {
         createTrackbar("V_BLUE_MIN:", "trackbar",
                        &this->buff_config_.param.V_BLUE_MIN, 255, nullptr);
         imshow("trackbar", trackbar_img_);
-        cout << "🧐 HSV蓝色预处理调参面板已打开 🧐" << endl;
+        std::cout << "🧐 HSV蓝色预处理调参面板已打开 🧐"
+                  << std::endl;
       }
 #endif  // !RELEASE
 
@@ -607,7 +561,7 @@ void RM_Buff::hsvProcessing(const int& _my_color) {
       break;
     default:
 
-      cout << "My color is default!" << endl;
+      std::cout << "My color is default!" << std::endl;
 
 #ifndef RELEASE
       if (this->buff_config_.ctrl.IS_PARAM_ADJUSTMENT == 1) {
@@ -645,7 +599,8 @@ void RM_Buff::hsvProcessing(const int& _my_color) {
         createTrackbar("V_BLUE_MIN:", "trackbar",
                        &this->buff_config_.param.V_BLUE_MIN, 255, nullptr);
         imshow("trackbar", trackbar_img_);
-        cout << "🧐 HSV通用预处理调参面板已打开 🧐" << endl;
+        std::cout << "🧐 HSV通用预处理调参面板已打开 🧐"
+                  << std::endl;
       }
 #endif  // !RELEASE
 
@@ -683,7 +638,7 @@ void RM_Buff::hsvProcessing(const int& _my_color) {
 }
 
 void RM_Buff::findTarget(Mat& _input_dst_img, Mat& _input_bin_img,
-                         vector<Target>& _target_box) {
+                         std::vector<Target>& _target_box) {
   findContours(_input_bin_img, contours_, hierarchy_, 2, CHAIN_APPROX_NONE);
 
   for (size_t i = 0; i < contours_.size(); ++i) {
@@ -708,6 +663,8 @@ void RM_Buff::findTarget(Mat& _input_dst_img, Mat& _input_bin_img,
       continue;
     }
 
+#ifdef DEBUG
+#else
     // 大轮廓周长条件
     this->big_rect_length_ =
         arcLength(contours_[static_cast<uint>(hierarchy_[i][3])], true);
@@ -715,6 +672,7 @@ void RM_Buff::findTarget(Mat& _input_dst_img, Mat& _input_bin_img,
         this->buff_config_.param.BIG_TARGET_Length_MIN) {
       continue;
     }
+#endif  // DEBUG
 
     // 大轮廓面积条件
     this->big_rect_area_ =
@@ -767,25 +725,26 @@ void RM_Buff::findTarget(Mat& _input_dst_img, Mat& _input_bin_img,
 
     _target_box.emplace_back(candidated_target_);
   }
-  cout << "扇叶数量：" << _target_box.size() << endl;
+  std::cout << "扇叶数量：" << _target_box.size() << std::endl;
 }
 
-bool RM_Buff::isFindTarget(Mat& _input_img, vector<Target>& _target_box) {
+bool RM_Buff::isFindTarget(Mat& _input_img, std::vector<Target>& _target_box) {
   if (_target_box.size() < 1) {
-    cout << "XXX 没有目标 XXX" << endl;
+    std::cout << "XXX 没有目标 XXX" << std::endl;
 
     current_target_ = Target();
     this->contours_.clear();
     this->hierarchy_.clear();
     _target_box.clear();
 
-    vector<vector<Point>>(contours_).swap(contours_);
-    vector<Vec4i>(hierarchy_).swap(hierarchy_);
-    vector<Target>(_target_box).swap(_target_box);
+    std::vector<std::vector<Point>>(contours_).swap(contours_);
+    std::vector<Vec4i>(hierarchy_).swap(hierarchy_);
+    std::vector<Target>(_target_box).swap(_target_box);
 
     return false;
   }
 
+  this->action_cnt_ = 0;
   this->inaction_cnt_ = 0;
 
   // 遍历容器获取未激活目标
@@ -793,23 +752,29 @@ bool RM_Buff::isFindTarget(Mat& _input_img, vector<Target>& _target_box) {
     if ((*iter).Type() != INACTION) {
       // TODO
       // 测试是否会多或者少了几个对象，如果没有顺序的话，有可能第一个就退出了
-      ++this->inaction_cnt_;
+      ++this->action_cnt_;
       continue;
     }
 
+    ++this->inaction_cnt_;
     // 获取到未激活对象后退出遍历 TODO 查看是否筛选出想要的内容
     this->current_target_ = *iter;
     this->current_target_.displayInactionTarget(_input_img);
   }
+
+#ifdef DEBUG
+  std::cout << "未击打数量" << inaction_cnt_ << std::endl;
+  std::cout << "已击打数量" << action_cnt_ << std::endl;
+#endif  // DEBUG
 
   // 清除容器
   this->contours_.clear();
   this->hierarchy_.clear();
   _target_box.clear();
 
-  vector<vector<Point>>(contours_).swap(contours_);
-  vector<Vec4i>(hierarchy_).swap(hierarchy_);
-  vector<Target>(_target_box).swap(_target_box);
+  std::vector<std::vector<Point>>(contours_).swap(contours_);
+  std::vector<Vec4i>(hierarchy_).swap(hierarchy_);
+  std::vector<Target>(_target_box).swap(_target_box);
 
   return true;
 }
@@ -830,7 +795,7 @@ Point2f RM_Buff::findCircleR(Mat& _input_src_img, Mat& _input_bin_img,
 
     // 清理容器
     this->center_r_box_.clear();
-    vector<Center_R>(center_r_box_).swap(center_r_box_);
+    std::vector<Center_R>(center_r_box_).swap(center_r_box_);
     return center_r_point2f;
   }
 
@@ -881,7 +846,9 @@ Point2f RM_Buff::findCircleR(Mat& _input_src_img, Mat& _input_bin_img,
   // 查找轮廓
   findContours(result_img_, contours_r_, RETR_EXTERNAL, CHAIN_APPROX_NONE);
 
-  cout << "遍历轮廓数量：" << this->contours_r_.size() << endl;
+#ifdef DEBUG
+  std::cout << "遍历轮廓数量：" << this->contours_r_.size() << std::endl;
+#endif  // DEBUG
 
   // 选择并记录合适的圆心目标
   for (size_t j = 0; j < this->contours_r_.size(); ++j) {
@@ -891,14 +858,16 @@ Point2f RM_Buff::findCircleR(Mat& _input_src_img, Mat& _input_bin_img,
 
     this->center_r_.inputParams(this->contours_r_[j], this->roi_img_);
 
-    cout << "矩形比例：" << this->center_r_.aspectRatio() << endl;
+    // std::cout << "矩形比例：" << this->center_r_.aspectRatio() << std::endl;
     if (this->center_r_.aspectRatio() < 0.9f ||
         this->center_r_.aspectRatio() > 1.25f) {
       continue;
     }
+#ifdef DEBUG
+    std::cout << "矩形面积：" << this->center_r_.Rect().boundingRect().area()
+              << std::endl;
+#endif  // DEBUG
 
-    cout << "矩形面积：" << this->center_r_.Rect().boundingRect().area()
-         << endl;
     if (this->center_r_.Rect().boundingRect().area() < 1000 ||
         this->center_r_.Rect().boundingRect().area() > 3500) {
       continue;
@@ -911,14 +880,17 @@ Point2f RM_Buff::findCircleR(Mat& _input_src_img, Mat& _input_bin_img,
            Scalar(0, 130, 255), 3);
     }
 
-    cout << "正确的矩形比例：" << this->center_r_.aspectRatio() << endl;
+#ifdef DEBUG
+    std::cout << "正确的矩形比例：" << this->center_r_.aspectRatio()
+              << std::endl;
+#endif  // DEBUG
   }
 
-  cout << "符合比例条件的：" << this->center_r_box_.size() << endl;
+  // std::cout << "符合比例条件的：" << this->center_r_box_.size() << std::endl;
 
   // 如果没有圆心目标，则退出
   if (this->center_r_box_.size() < 1) {
-    cout << "圆心为：假定圆心" << endl;
+    std::cout << "圆心为：假定圆心" << std::endl;
     this->is_circle_ = false;
     center_r_point2f = this->roi_global_center_;
 
@@ -935,7 +907,7 @@ Point2f RM_Buff::findCircleR(Mat& _input_src_img, Mat& _input_bin_img,
            return c1.centerDist() < c2.centerDist();
          });
 
-    cout << "圆心为：真实圆心" << endl;
+    std::cout << "圆心为：真实圆心" << std::endl;
     this->is_circle_ = true;
     center_r_point2f =
         this->center_r_box_[0].Rect().center + roi_R.boundingRect2f().tl();
@@ -953,8 +925,8 @@ Point2f RM_Buff::findCircleR(Mat& _input_src_img, Mat& _input_bin_img,
   this->center_r_box_.clear();
   this->contours_r_.clear();
 
-  vector<Center_R>(center_r_box_).swap(center_r_box_);
-  vector<vector<Point>>(contours_r_).swap(contours_r_);
+  std::vector<Center_R>(center_r_box_).swap(center_r_box_);
+  std::vector<std::vector<Point>>(contours_r_).swap(contours_r_);
 
   return center_r_point2f;
 }
@@ -996,7 +968,7 @@ void RM_Buff::Angle() {
 
   // 角度差
   diff_angle_ = current_angle_ - last_angle_;
-  cout << "测试 当前角度差为：" << diff_angle_ << endl;
+  std::cout << "测试 当前角度差为：" << diff_angle_ << std::endl;
 
   // 过零处理
   if (diff_angle_ > 180) {
@@ -1008,8 +980,13 @@ void RM_Buff::Angle() {
   // TODO:当变化量大于30°时，则是切换装甲板，则重置diff为0，last为当前。
 }
 
-void RM_Buff::Direction() {
+#define TEST2
+// #define DEBUG1
+
+void RM_Buff::Direction() 
+{
   ++find_cnt_;
+#ifdef DEBUG1
   if (find_cnt_ % 2 == 0) {
     // 隔帧读取数据
     if (current_direction_ != 0 && confirm_cnt_ < 10) {
@@ -1030,16 +1007,46 @@ void RM_Buff::Direction() {
       find_cnt_ = 0;
     }
   }
+#else
+
+
+#  ifdef TEST2
+  if (find_cnt_ % 2 == 0) {
+    current_direction_ = getState();
+    filter_direction_ = (1 - 0.01) * last_direction_ + 0.01 * current_direction_;
+    last_direction_ = filter_direction_;
+  }
+
+  if (find_cnt_ == 10) {
+    find_cnt_ = 0;
+  }
 
   // 显示当前转动信息
-  if (current_direction_ == 0) {
-    cout << "转动方向：不转动" << endl;
-  } else if (current_direction_ == 1) {
-    cout << "转动方向：顺时针转动" << endl;
-  } else if (current_direction_ == -1) {
-    cout << "转动方向：逆时针转动" << endl;
+  if (filter_direction_ > 0) {
+    std::cout << "转动方向：顺时针转动" << std::endl;
+
+    final_direction_ = 1;
+    last_final_direction_ = final_direction_;
   }
+  else if (filter_direction_ < 0) {
+    std::cout << "转动方向：逆时针转动" << std::endl;
+
+    final_direction_ = -1;
+    last_final_direction_ = final_direction_;
+  }
+  else {
+    std::cout << "转动方向：不转动" << std::endl;
+
+    final_direction_ = last_final_direction_;
+  }
+#endif  // TEST2
+
+#endif  // DEBUG1
 }
+
+#undef DEBUG1
+#undef TEST2
+
 
 int RM_Buff::getState() {
   if (fabs(diff_angle_) < 10 && fabs(diff_angle_) > 1e-6) {
@@ -1075,7 +1082,7 @@ void RM_Buff::Velocity() {
     last_diff_angle_ = diff_angle_;
   }
 
-  cout << "测试 当前风车转速为：" << current_speed_ << endl;
+  std::cout << "测试 当前风车转速为：" << current_speed_ << std::endl;
 }
 
 float RM_Buff::Predict(const float& _bullet_velocity,
@@ -1128,13 +1135,13 @@ void RM_Buff::mutativePredict(const float& _input_predict_quantity,
 
 void RM_Buff::calculateTargetPointSet(const float& _predict_quantity,
                                       const Point2f& _final_center_r,
-                                      vector<Point2f>& _target_2d_point,
+                                      std::vector<Point2f>& _target_2d_point,
                                       Mat& _input_dst_img,
                                       const bool& _is_find_target) {
   // 判断有无目标，若无则重置参数并提前退出
   if (!_is_find_target) {
     _target_2d_point.clear();
-    _target_2d_point = vector<Point2f>(4, Point2f(0.f, 0.f));
+    _target_2d_point = std::vector<Point2f>(4, Point2f(0.f, 0.f));
     // 重置参数
     return;
   }
@@ -1149,7 +1156,7 @@ void RM_Buff::calculateTargetPointSet(const float& _predict_quantity,
   }
 
   // 计算最终角度和弧度
-  final_radian_ = theta_ + current_direction_ * _predict_quantity;
+  final_radian_ = theta_ + final_direction_ * _predict_quantity;
   final_angle_ = final_radian_ * 180 / CV_PI;
 
   // 计算sin和cos
@@ -1222,10 +1229,10 @@ void RM_Buff::updateLastData(const bool& _is_find_target)
 
 {
   if (!_is_find_target) {
-    cout << "没有目标，不需要更新上一帧数据" << endl;
+    std::cout << "没有目标，不需要更新上一帧数据" << std::endl;
     is_find_last_target_ = _is_find_target;
     target_2d_point_.clear();
-    vector<Point2f>(target_2d_point_).swap(target_2d_point_);
+    std::vector<Point2f>(target_2d_point_).swap(target_2d_point_);
     target_rect_ = RotatedRect();
     return;
   }
@@ -1234,10 +1241,10 @@ void RM_Buff::updateLastData(const bool& _is_find_target)
   this->last_angle_ = this->current_angle_;
   is_find_last_target_ = _is_find_target;
   target_2d_point_.clear();
-  vector<Point2f>(target_2d_point_).swap(target_2d_point_);
+  std::vector<Point2f>(target_2d_point_).swap(target_2d_point_);
   target_rect_ = RotatedRect();
 
-  cout << "发现目标，已更新上一帧数据" << endl;
+  std::cout << "发现目标，已更新上一帧数据" << std::endl;
 }
 
 }  // namespace buff

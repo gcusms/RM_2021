@@ -5,6 +5,7 @@
 #include "devices/serial/rm_serial_port.hpp"
 #include "module/angle_solve/rm_solve_pnp.hpp"
 #include "module/armor/rm_armor.hpp"
+#include "module/RM_Buff/RM_Buff.hpp"
 class Connector {
  private:
   cv::Mat src_img_;
