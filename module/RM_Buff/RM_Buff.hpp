@@ -1,15 +1,15 @@
 #ifndef RM_BUFFDETECTION_H_
 #define RM_BUFFDETECTION_H_
 
-#include "Basis/RM_Control/Release_Controller.h"
-#include "Basis/angle_solve/rm_solve_pnp.hpp"
-#include "Modules/RM_Buff/Center_R/Center_R.hpp"
-#include "Modules/RM_Buff/Target/Target.hpp"
-#include "RM_Buff/RM_FPS/RM_FPS.h"
-#include "Tools/RM_Messenger/RM_Messenger.h"
-#include "Tools/roi/rm_roi.h"
+#include "module/angle_solve/rm_solve_pnp.hpp"
+#include "module/RM_Buff/Center_R/Center_R.hpp"
+#include "module/RM_Buff/Target/Target.hpp"
+#include "module/RM_Buff/RM_FPS/RM_FPS.h"
+#include "devices/serial/rm_serial_port.hpp"
+#include "module/roi/rm_roi.h"
 #include <algorithm>
 #include <string>
+#include <vector>
 
 using namespace cv;
 
@@ -77,6 +77,8 @@ struct Buff_Param
 
   // 轮廓面积
 
+  // 滤波器系数
+  float FILTER_COEFFICIENT;
 
   // 能量机关打击模型参数，详情见 buff_config.xml
   float BUFF_H;
@@ -133,14 +135,7 @@ public:
    * @param  _receive_info    串口接收结构体
    * @param  _send_info       串口发送结构体
    */
-  void runTask(Mat& _input_img, Receive_Info& _receive_info, Send_Info& _send_info);
-
-  /**
-   * @brief 总执行函数（接口）
-   * @param  _input_img       输入图像
-   * @param  _messenger       信使指针
-   */
-  void runTask(Mat& _input_img, RM_Messenger* _messenger);
+  void runTask(Mat& _input_img, serial_port::Receive_Data& _receive_info, serial_port::Write_Data& _send_info);
 
   /**
    * @brief 总执行函数（接口）
@@ -148,7 +143,7 @@ public:
    * @param  _receive_info    串口接收结构体
    * @return Send_Info 串口发送结构体
    */
-  Send_Info runTask(Mat& _input_img, Receive_Info& _receive_info);
+  serial_port::Write_Data runTask(Mat& _input_img, serial_port::Receive_Data& _receive_info);
 
 private:
   /**
@@ -173,7 +168,7 @@ private:
   // 类中全局变量
   Mat             src_img_;          // 输入原图
   Mat             dst_img_;          // 图像效果展示图
-  vector<Point2f> target_2d_point_;  // 目标二维点集
+  std::vector<Point2f> target_2d_point_;  // 目标二维点集
   RotatedRect     target_rect_;      // 目标矩形
   int             my_color_;         // 当前自己的颜色
   Buff_Cfg        buff_config_;      // 参数结构体
@@ -227,7 +222,7 @@ private:
   Mat ele_ = getStructuringElement(MORPH_ELLIPSE, Size(3, 3));  // 椭圆内核
 
   // BGR
-  vector<Mat> split_img_;   //分通道图
+  std::vector<Mat> split_img_;   //分通道图
   int         average_th_;  //平均阈值
 
   // HSV
@@ -246,7 +241,7 @@ private:
    * @param  _input_bin_img   输入二值图
    * @param  _target_box      输出目标容器
    */
-  void findTarget(Mat& _input_dst_img, Mat& _input_bin_img, vector<Target>& _target_box);
+  void findTarget(Mat& _input_dst_img, Mat& _input_bin_img, std::vector<Target>& _target_box);
 
   // 内轮廓
   FanArmor small_target_;
@@ -258,13 +253,15 @@ private:
   // 当前检测打击目标（现在）
   Target current_target_;
   // 打击目标队列
-  vector<Target> target_box_;
+  std::vector<Target> target_box_;
   // 已打击扇叶数
+  int action_cnt_;
+  // 未击打扇叶数
   int inaction_cnt_;
 
   // 轮廓点集 轮廓关系
-  vector<vector<Point>> contours_;
-  vector<Vec4i>         hierarchy_;
+  std::vector<std::vector<Point>> contours_;
+  std::vector<Vec4i>         hierarchy_;
 
   // 小轮廓条件(area and length)
   float small_rect_area_;
@@ -292,7 +289,7 @@ private:
    * @return true                 发现目标
    * @return false                丢失目标
    */
-  bool isFindTarget(Mat& _input_img, vector<Target>& _target_box);
+  bool isFindTarget(Mat& _input_img, std::vector<Target>& _target_box);
 
 private:
   /**
@@ -314,9 +311,9 @@ private:
   roi::ImageRoi roi_tool_;            // roi截取工具
 
   Center_R              center_r_;          // 候选圆心R
-  vector<vector<Point>> contours_r_;        // 中心R的遍历点集
+  std::vector<std::vector<Point>> contours_r_;        // 中心R的遍历点集
   Point2f               roi_local_center_;  // 截取roi的图像中心点(在roi_img中)
-  vector<Center_R>      center_r_box_;      // 第一次筛选之后得到的待选中心R
+  std::vector<Center_R>      center_r_box_;      // 第一次筛选之后得到的待选中心R
   Point2f               final_center_r_;    // 最终圆心（假定/真实）
 
 private:
@@ -360,11 +357,15 @@ private:
   float last_diff_angle_;
 
   // 方向
-  float current_direction_;  // 方向
-  int   find_cnt_;           // 发现目标次数
-  float d_angle_;            // 滤波器系数
-  int   confirm_cnt_;        // 记录达到条件次数
-  bool  is_confirm_;         // 判断是否达到条件
+  float filter_direction_;      // 第二次滤波方向
+  int   final_direction_;       // 最终的方向
+  int   last_final_direction_;  // 上一次最终的方向
+  float current_direction_;     // 当前方向
+  float last_direction_;        // 上一次方向
+  int   find_cnt_;              // 发现目标次数
+  float d_angle_;               // 滤波器系数
+  int   confirm_cnt_;           // 记录达到条件次数
+  bool  is_confirm_;            // 判断是否达到条件
 
   // 速度
   float  current_speed_;  //当前转速
@@ -426,7 +427,7 @@ private:
    */
   void calculateTargetPointSet(const float&     _predict_quantity,
                                const Point2f&   _final_center_r,
-                               vector<Point2f>& _target_2d_point,
+                               std::vector<Point2f>& _target_2d_point,
                                Mat&             _input_dst_img,
                                const bool&      _is_find_target);
 

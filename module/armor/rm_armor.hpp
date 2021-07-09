@@ -7,12 +7,8 @@
 #include "devices/serial/rm_serial_port.hpp"
 #include "module/angle_solve/rm_solve_pnp.hpp"
 
-angle_solve::RM_Solvepnp pnp_(
-    "devices/camera/cameraParams/cameraParams_407.xml",
-    "module/angle_solve/pnp_config.xml");
-serial_port::SerialPort serial_("devices/serial/serial_config.xml");
 namespace armor {
-typedef struct Armor_Data {
+struct Armor_Data {
   cv::RotatedRect armor_rect;
   float width = 0;              ///装甲板宽度
   float height = 0;             ///装甲板高度
@@ -35,7 +31,7 @@ typedef struct Armor_Data {
   serial_port::Write_Data write_data_;
 };
 
-typedef struct Armor_Cfg {
+struct Armor_Cfg {
   int armor_edit;
   int armor_draw;
   int light_height_ratio_min;
@@ -52,7 +48,7 @@ typedef struct Armor_Cfg {
   int big_armor_aspect_max;
 };
 
-typedef struct Light_Cfg {
+struct Light_Cfg {
   int light_draw;
   int light_edit;
   //灯条宽高比范围
@@ -66,7 +62,7 @@ typedef struct Light_Cfg {
   int perimeter_min;
 };
 
-typedef struct Image_Cfg {
+struct Image_Cfg {
   // BGR
   int red_armor_gray_th;
   int red_armor_color_th;
@@ -141,6 +137,10 @@ class RM_ArmorDetector {
   cv::Mat bin_color_img;
   cv::Mat light_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
   cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
+
+  angle_solve::RM_Solvepnp pnp_ = angle_solve::RM_Solvepnp(
+    "devices/camera/cameraParams/cameraParams_407.xml",
+    "module/angle_solve/pnp_config.xml");
 
   Armor_Data armor_data_;
 

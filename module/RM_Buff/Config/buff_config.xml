@@ -78,16 +78,16 @@
 <V_BLUE_MIN>113</V_BLUE_MIN> -->
 
 <SMALL_TARGET_AREA_MAX>2000</SMALL_TARGET_AREA_MAX>
-<SMALL_TARGET_AREA_MIN>200</SMALL_TARGET_AREA_MIN>
-<BIG_TARGET_AREA_MAX>10000</BIG_TARGET_AREA_MAX>
-<BIG_TARGET_AREA_MIN>300</BIG_TARGET_AREA_MIN>
+<SMALL_TARGET_AREA_MIN>600</SMALL_TARGET_AREA_MIN>
+<BIG_TARGET_AREA_MAX>15000</BIG_TARGET_AREA_MAX>
+<BIG_TARGET_AREA_MIN>3000</BIG_TARGET_AREA_MIN>
 <!--
 /**
   @brief: 装甲板和扇叶面积阈值
   @param: SMALL_TARGET_AREA_MAX       扇叶装甲 面积最大值
   @param: SMALL_TARGET_AREA_MIN       扇叶装甲 面积最小值
-  @param: BIG_TARGET_AREA_MAX         扇叶整体 面积最大值
-  @param: BIG_TARGET_AREA_MIN         扇叶整体 面积最小值
+  @param: BIG_TARGET_AREA_MAX         扇叶整体 面积最大值  10000
+  @param: BIG_TARGET_AREA_MIN         扇叶整体 面积最小值  300
 */
 -->
 
@@ -147,6 +147,13 @@
 /**
   @brief: 假定圆心的roi矩形大小
 */
+-->
+
+<FILTER_COEFFICIENT>0.8</FILTER_COEFFICIENT>
+<!--
+  @brief: 滤波器系数
+  滤波系数越小，滤波结果越平稳，但是灵敏度越低；
+  滤波系数越大，灵敏度越高，但是滤波结果越不稳定。
 -->
 
 <BUFF_H>2386</BUFF_H>
