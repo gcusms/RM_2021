@@ -32,6 +32,8 @@ class Armor_Top {
   int minimum_error_ = 50;     // 最小误差
   int true_floor_ = 2;         // 通过下限
   int true_upper_ = 5;         // 通过上限
+  float data_add_ ;
+  float aver_data_; 
   cv::Mat top_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
 
  public:
@@ -41,7 +43,7 @@ class Armor_Top {
    * @param _data 陀螺仪yaw数据
    * @return Top_Status
    */
-  Top_Status run_Top(float _data);
+  float run_Top(float _data);
   /**
    * @brief 小陀螺状态清零
    *

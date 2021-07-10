@@ -171,8 +171,7 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
       final_Armor();
       std::cout << "陀螺判断 = "
                 << top_.run_Top(
-                       _receive_data.Receive_Yaw_Angle_Info.yaw_angle) *
-                       11111111
+                       _receive_data.Receive_Yaw_Angle_Info.yaw_angle) *10
                 << std::endl;
       pnp_.run_Solvepnp(_receive_data.bullet_velocity, armor_[0].distinguish,
                         armor_[0].armor_rect);
@@ -482,24 +481,26 @@ cv::Mat RM_ArmorDetector::gray_Pretreat(cv::Mat &_src_img,
                                         const int _my_color) {
   cv::cvtColor(_src_img, gray_img_, cv::COLOR_BGR2GRAY);
   switch (_my_color) {
-    case serial_port::BLUE:
-      if (image_config_.gray_edit) {
-        cv::namedWindow("gray_trackbar");
-        cv::createTrackbar("gray_th", "gray_trackbar",
-                           &image_config_.blue_armor_gray_th, 255, NULL);
-        cv::imshow("gray_trackbar", this->gray_trackbar_);
-      }
-      cv::threshold(gray_img_, bin_gray_img, image_config_.blue_armor_gray_th,
-                    255, cv::THRESH_BINARY);
-      break;
-    default:
-      if (image_config_.gray_edit) {
+    case serial_port::RED:
+
+          if (image_config_.gray_edit) {
         cv::namedWindow("gray_trackbar");
         cv::createTrackbar("gray_th", "gray_trackbar",
                            &image_config_.red_armor_gray_th, 255, NULL);
         cv::imshow("gray_trackbar", this->gray_trackbar_);
       }
       cv::threshold(gray_img_, bin_gray_img, image_config_.red_armor_gray_th,
+                    255, cv::THRESH_BINARY);
+
+      break;
+    default:
+          if (image_config_.gray_edit) {
+        cv::namedWindow("gray_trackbar");
+        cv::createTrackbar("gray_th", "gray_trackbar",
+                           &image_config_.blue_armor_gray_th, 255, NULL);
+        cv::imshow("gray_trackbar", this->gray_trackbar_);
+      }
+      cv::threshold(gray_img_, bin_gray_img, image_config_.blue_armor_gray_th,
                     255, cv::THRESH_BINARY);
       break;
   }

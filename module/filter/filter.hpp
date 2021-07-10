@@ -16,9 +16,9 @@ class RM_kalmanfilter {
   cv::Mat measurement_matrix;
   cv::Mat filter_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
   cv::Point lost_armor_center;
-  int multiple_ = 10;
-  int first_ignore_time_ = 5;
-  int armor_threshold_max_ = 20;
+  int multiple_ = 2;
+  int first_ignore_time_ = 2;
+  int armor_threshold_max_ = 100;
   float p;
   float x = 640;
   float y = 320;
@@ -30,7 +30,6 @@ class RM_kalmanfilter {
     float differ;                 // 前后时刻的差值
     int get_top_times = 0;        // 陀螺仪数据获取次数
   } top_diff_Queue;
-  top_diff_Queue temp;
   top_diff_Queue top_angle_differ;
 
  public:

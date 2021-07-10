@@ -25,6 +25,7 @@ enum color {
   ALL,
   BLUE,
   RED,
+
   /**
       @brief: 描述己方颜色信息
       @param: RED           己方为红色

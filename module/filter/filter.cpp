@@ -35,6 +35,7 @@ void RM_kalmanfilter::reset() {
 float RM_kalmanfilter::use_RM_KF(float _top, float _yaw_angle,
                                  cv::Point _armor_center) {
   if (_armor_center == cv::Point()) {
+    top_angle_differ.get_top_times = 0;
     return _yaw_angle;
   }
   double armor_vary = std::sqrt((lost_armor_center.x - _armor_center.x) *
@@ -42,18 +43,26 @@ float RM_kalmanfilter::use_RM_KF(float _top, float _yaw_angle,
                                 (lost_armor_center.y - _armor_center.y) *
                                     (lost_armor_center.y - _armor_center.y));
   lost_armor_center = _armor_center;
+
   cv::namedWindow("filter_trackbar");
   cv::createTrackbar("multiple_", "filter_trackbar", &multiple_, 1000, NULL);
   cv::createTrackbar("first_ignore_time_", "filter_trackbar",
                      &first_ignore_time_, 100, NULL);
-  cv::createTrackbar("armor_threshold_max_", "filter_trackbar", &multiple_, 100,
+  cv::createTrackbar("armor_threshold_max_", "filter_trackbar", &armor_threshold_max_, 100,
                      NULL);
   cv::imshow("filter_trackbar", filter_trackbar_);
-  top_angle_differ.top_angle = _top;
 
-  // 第一次获取的陀螺仪数据时, 对上一时刻(不存在)的陀螺仪数据的假设
+  if(armor_vary > armor_threshold_max_){
+    std::cout<<"---------------------------------------------------------tab armor-------------------------------------------------------" << std::endl;
+    top_angle_differ.get_top_times = 0;
+    return _yaw_angle;
+  }
+
+  top_angle_differ.top_angle_ = _top;
+
+  // 第一次获取的陀螺仪数据时, 对上一时刻(不存在)的陀螺仪数据的假设==> 0 / 此时刻与上一时刻的陀螺仪数值相同
   if (top_angle_differ.get_top_times == 0) {
-    top_angle_differ.top_angle = 0;
+    top_angle_differ.top_angle = _top;
   }
 
   std::cout << "top: " << _top << std::endl;
@@ -68,11 +77,11 @@ float RM_kalmanfilter::use_RM_KF(float _top, float _yaw_angle,
   std::cout << "top_angle_differ " << top_angle_differ.differ << std::endl;
 
   cv::Point2f top_differ = cv::Point2f(top_angle_differ.differ * multiple_, 0);
-  if (top_angle_differ.get_top_times > first_ignore_time_/*  &&
-      armor_vary < armor_threshold_max_ */) {
-    return _yaw_angle + predict_point(top_differ).x;
-  } else {
+  // if (top_angle_differ.get_top_times > first_ignore_time_ /* &&
+  //     armor_vary < armor_threshold_max_ */) {
+  //   return _yaw_angle + predict_point(top_differ).x;
+  // } else {
     return _yaw_angle;  // top_angle_differ->differ
-  }
+  // }
 }
 }  // namespace kalman
