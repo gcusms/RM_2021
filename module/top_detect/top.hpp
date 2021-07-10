@@ -2,45 +2,46 @@
 #include <opencv2/opencv.hpp>
 #include <vector>
 
-#include "module/armor/rm_armor.hpp"
-
+namespace top {
 enum Top_Status {
   /**
-   * @brief STOP       停止
-   * @brief TRANSITION 过渡时期
+   * @brief STOP       不是
    * @brief ISTOP      小陀螺
    */
   STOP,
-  TRANSITION,
   ISTOP,
 };
 
 struct Top_Data {
-  Top_Status status = STOP;   // 陀螺状态
-  int is_shooting = 0;        // 开火键
-  int shooting_cycle = 0;     // 射击周期
-  int top_cycle = 0;          // 陀螺周期
-  float first_tan_angle = 0;  // 第一次检测tan角度
+  Top_Status status = STOP;  // 陀螺状态
+  int is_shooting = 0;       // 开火键
+  int shooting_cycle = 0;    // 射击周期
+  int top_cycle = 0;         // 陀螺周期
 };
 class Armor_Top {
  private:
-  Top_Data top_data_;         // 小陀螺状态
-  int count = 0;              // 运行次数计数
-  int min_cycle_count = 5;    // 最小周期
-  int max_cycle_count = 200;  // 最大周期
-  int first_temp;             // 第一次检测到位置
-  int transition_cycle = 0;   // 过渡周期
-  Top_Status status = STOP;
+  Top_Data top_data_;          // 小陀螺状态
+  int count = 0;               // 运行次数计数
+  int min_cycle_count_ = 5;    // 最小周期
+  int max_cycle_count_ = 200;  // 最大周期
+  float lost_data_;            // 上个数据
+  float data_different_;       // 数据总差值
+  int judge_count_ = 0;        // 判断计数
+  Top_Status status_ = STOP;   // 陀螺状态
+  int minimum_gap_ = 50;       // 最小差值
+  int minimum_error_ = 50;     // 最小误差
+  int true_floor_ = 2;         // 通过下限
+  int true_upper_ = 5;         // 通过上限
+  cv::Mat top_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
 
  public:
   /**
-   * @brief 主函数
+   * @brief 小陀螺判断
    *
-   * @param _src_img 原图像
-   * @param
-   * @return Top_Data
+   * @param _data 陀螺仪yaw数据
+   * @return Top_Status
    */
-  Top_Status run_Top(cv::Mat &_src_img, float _data);
+  Top_Status run_Top(float _data);
   /**
    * @brief 小陀螺状态清零
    *
@@ -50,7 +51,8 @@ class Armor_Top {
    * @brief 计数器清零
    *
    */
-  void countInitializ();
+  inline void countInitializ() { count = 0; }
   Armor_Top();
   ~Armor_Top();
 };
+}  // namespace top

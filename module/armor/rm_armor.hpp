@@ -7,6 +7,7 @@
 #include "devices/serial/rm_serial_port.hpp"
 #include "module/angle_solve/rm_solve_pnp.hpp"
 #include "module/filter/filter.hpp"
+#include "module/top_detect/top.hpp"
 
 namespace armor {
 struct Armor_Data {
@@ -150,7 +151,7 @@ class RM_ArmorDetector {
   serial_port::SerialPort serial_ =
       serial_port::SerialPort("devices/serial/serial_config.xml");
   kalman::RM_kalmanfilter kalman_ = kalman::RM_kalmanfilter();
-
+  top::Armor_Top top_ = top::Armor_Top();
   Armor_Data armor_data_;
 
   std::vector<Armor_Data> armor_;

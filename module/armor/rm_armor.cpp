@@ -169,8 +169,14 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
   if (find_Light()) {
     if (fitting_Armor()) {
       final_Armor();
+      std::cout << "陀螺判断 = "
+                << top_.run_Top(
+                       _receive_data.Receive_Yaw_Angle_Info.yaw_angle) *
+                       11111111
+                << std::endl;
       pnp_.run_Solvepnp(_receive_data.bullet_velocity, armor_[0].distinguish,
                         armor_[0].armor_rect);
+
       if (armor_config_.armor_draw == 1 || light_config_.light_draw == 1 ||
           armor_config_.armor_edit == 1 || light_config_.light_edit == 1) {
         imshow("armor_draw_img", draw_img_);

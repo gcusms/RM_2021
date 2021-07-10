@@ -1,37 +1,62 @@
 #include "module/top_detect/top.hpp"
-
-void Armor_Top::countInitializ() { count = 0; }
+namespace top {
 
 void Armor_Top::topStatusInitializ() {
   top_data_.status = STOP;
   top_data_.is_shooting = 0;
   top_data_.top_cycle = 0;
-  top_data_.first_tan_angle = 0.f;
 }
 
-Top_Status Armor_Top::run_Top(cv::Mat &_src_img, float _data) {
-  ++count;  //计数
+Top_Status Armor_Top::run_Top(float _data) {
+  cv::namedWindow("top_trackbar");
+  cv::createTrackbar("minimum_gap", "top_trackbar", &minimum_gap_, 1000, NULL);
+  cv::createTrackbar("minimum_error_", "top_trackbar", &minimum_error_, 1000,
+                     NULL);
+  cv::createTrackbar("minimum_min_cycle_count_gap", "top_trackbar",
+                     &min_cycle_count_, 1000, NULL);
+  cv::createTrackbar("max_cycle_count_", "top_trackbar", &max_cycle_count_,
+                     1000, NULL);
+  cv::createTrackbar("true_floor", "top_trackbar", &true_floor_, 1000, NULL);
+  cv::createTrackbar("true_upper", "top_trackbar", &true_upper_, 1000, NULL);
+  cv::imshow("top_trackbar", top_trackbar_);
+  count++;
   if (count == 1) {
-    top_data_.first_tan_angle = _data;
-  } else if (count > 1 && count < max_cycle_count) {
-    if (_data < top_data_.first_tan_angle + 0.5 &&
-        _data > top_data_.first_tan_angle - 0.5) {
-      if (count > min_cycle_count) {
-        top_data_.status = ISTOP;
-        top_data_.shooting_cycle = count;
-        top_data_.top_cycle = 4 * top_data_.shooting_cycle;
-        countInitializ();
+    lost_data_ = _data;
+  } else {
+    // 每帧差值
+    int different = _data - lost_data_;
+    data_different_ += different;
+    if (fabs(different) > minimum_gap_ * 0.01) {
+      // 差值和接近0
+      if (fabs(data_different_) < minimum_error_ * 0.01) {
+        // 在限定的周期内
+        if (count > min_cycle_count_ && count < max_cycle_count_) {
+          judge_count_++;
+          if (judge_count_ > true_upper_) {
+            judge_count_ = true_upper_;
+          }
+          countInitializ();
+        } else {
+          judge_count_--;
+          countInitializ();
+        }
       } else {
-        top_data_.status = STOP;
+        judge_count_--;
         countInitializ();
       }
+    } else {
+      judge_count_--;
+      countInitializ();
     }
-    std::cout << "周期 = " << top_data_.top_cycle << std::endl;
-  } else {
-    countInitializ();
+    if (judge_count_ < true_floor_ + 1) {
+      status_ = STOP;
+    } else {
+      status_ = ISTOP;
+    }
   }
-  return top_data_.status;
+  return status_;
 }
 
 Armor_Top::Armor_Top() {}
 Armor_Top::~Armor_Top() {}
+}  // namespace top
