@@ -8,13 +8,18 @@ using namespace std;
 using namespace cv;
 #include <queue>
 
+#include "module/armor/rm_armor.hpp"
 #include "rm_serial_port.hpp"
 
 class RM_kalmanfilter {
  private:
   cv::KalmanFilter KF_;
   Mat measurement_matrix;
-
+  cv::Mat filter_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
+  cv::Point lost_armor_center = cv::Point();
+  int multiple_ = 10;
+  int first_ignore_time_ = 5;
+  int armor_threshold_max_ = 20;
   float p;
   float x = 640;
   float y = 320;
@@ -36,7 +41,7 @@ class RM_kalmanfilter {
   Point2f predict_point(Point2f _p);
   void reset();
 
-  float use_RM_KF(float top);
+  float use_RM_KF(float top, float _yaw_angle, cv::Point armor_center);
   // void use_RM_kf(top_diff_Queue *top_angle_differ, serial_port::SerialPort
   // serial_);
 

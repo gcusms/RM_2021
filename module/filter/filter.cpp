@@ -30,15 +30,25 @@ Point2f RM_kalmanfilter::predict_point(Point2f _p) {
 void RM_kalmanfilter::reset() { measurement_matrix = Mat::zeros(2, 1, CV_32F); }
 
 //
-float RM_kalmanfilter::use_RM_KF(float top) {
-  top_angle_differ->top_angle_ = top;
+float RM_kalmanfilter::use_RM_KF(float _top, float _yaw_angle,
+                                 cv::Point _armor_center) {
+  float armor_vary = armor::Distance(lost_armor_center, _armor_center);
+  lost_armor_center = _armor_center;
+  cv::namedWindow("filter_trackbar");
+  cv::createTrackbar("multiple_", "filter_trackbar", &multiple_, 1000, NULL);
+  cv::createTrackbar("first_ignore_time_", "filter_trackbar",
+                     &first_ignore_time_, 100, NULL);
+  cv::createTrackbar("armor_threshold_max_", "filter_trackbar", &multiple_, 100,
+                     NULL);
+  imshow("filter_trackbar", filter_trackbar_);
+  top_angle_differ->top_angle_ = _top;
 
   // 第一次获取的陀螺仪数据时, 对上一时刻(不存在)的陀螺仪数据的假设
   if (top_angle_differ->get_top_times == 0) {
     top_angle_differ->top_angle = 0;
   }
 
-  std::cout << "top: " << top << std::endl;
+  std::cout << "top: " << _top << std::endl;
 
   top_angle_differ->get_top_times++;  // 自动计数 -> 获得陀螺仪数据的次数
 
@@ -51,6 +61,11 @@ float RM_kalmanfilter::use_RM_KF(float top) {
 
   std::cout << "top_angle_differ " << top_angle_differ->differ << std::endl;
 
-  Point2f top_differ = Point2f(top_angle_differ->differ * 10, 0);
-  return predict_point(top_differ).x;  // top_angle_differ->differ
+  Point2f top_differ = Point2f(top_angle_differ->differ * multiple_, 0);
+  if (top_angle_differ->get_top_times > first_ignore_time_ &&
+      armor_vary < armor_threshold_max_) {
+    return _yaw_angle + predict_point(top_differ).x;
+  } else {
+    return _yaw_angle;  // top_angle_differ->differ
+  }
 }

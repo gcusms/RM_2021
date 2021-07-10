@@ -191,6 +191,16 @@ class RM_ArmorDetector {
 
   cv::Mat fuse_Image(cv::Mat _bin_gray_img, cv::Mat _bin_color_img);
 };
+/**
+ * @brief 求两点之间的距离
+ *
+ * @param a 点A
+ * @param b 点B
+ * @return double 两点之间的距离
+ */
+float Distance(cv::Point a, cv::Point b) {
+  return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+}
 }  // namespace armor
 
 #endif  // !_MODULE_ARMOR

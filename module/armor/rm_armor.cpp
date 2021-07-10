@@ -58,16 +58,7 @@ RM_ArmorDetector::RM_ArmorDetector(std::string _armor_config) {
   std::cout << "装甲板参数初始化成功" << std::endl;
   std::cout << "💚💚💚💚💚💚💚💚💚💚💚💚" << std::endl;
 }
-/**
- * @brief 求两点之间的距离
- *
- * @param a 点A
- * @param b 点B
- * @return double 两点之间的距离
- */
-float Distance(cv::Point a, cv::Point b) {
-  return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-}
+
 /**
  * @brief 释放内存
  *
@@ -193,8 +184,8 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
     draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
   return serial_.gainWriteData(
-      pnp_.returnYawAngle() +
-          kalman_.use_RM_KF(_receive_data.Receive_Yaw_Angle_Info.yaw_angle),
+      kalman_.use_RM_KF(_receive_data.Receive_Yaw_Angle_Info.yaw_angle,
+                        pnp_.returnYawAngle(), armor_[0].armor_rect.center),
       pnp_.returnPitchAngle(), pnp_.returnDepth(), armor_.size(), 0);
 }
 
