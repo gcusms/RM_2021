@@ -15,7 +15,7 @@ enum Top_Status {
   ISTOP,
 };
 
-typedef struct Top_Data {
+struct Top_Data {
   Top_Status status = STOP;   // 陀螺状态
   int is_shooting = 0;        // 开火键
   int shooting_cycle = 0;     // 射击周期

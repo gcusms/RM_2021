@@ -1,25 +1,25 @@
 #include "filter.hpp"
-
+namespace kalman {
 RM_kalmanfilter::RM_kalmanfilter() : KF_(4, 2) {
-  measurement_matrix = Mat::zeros(2, 1, CV_32F);
+  measurement_matrix = cv::Mat::zeros(2, 1, CV_32F);
   KF_.transitionMatrix =
-      (Mat_<float>(4, 4) << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+      (cv::Mat_<float>(4, 4) << 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
 
-  setIdentity(KF_.measurementMatrix, Scalar::all(1));
-  setIdentity(KF_.processNoiseCov, Scalar::all(1e-3));  //
+  setIdentity(KF_.measurementMatrix, cv::Scalar::all(1));
+  setIdentity(KF_.processNoiseCov, cv::Scalar::all(1e-3));  //
   setIdentity(KF_.measurementNoiseCov,
-              Scalar::all(1e-2));  //测量协方差矩阵R，数值越大回归越慢
-  setIdentity(KF_.errorCovPost, Scalar::all(1));
+              cv::Scalar::all(1e-2));  //测量协方差矩阵R，数值越大回归越慢
+  setIdentity(KF_.errorCovPost, cv::Scalar::all(1));
 
-  KF_.statePost = (Mat_<float>(4, 1) << x, y, 0, 0);  //初始值
+  KF_.statePost = (cv::Mat_<float>(4, 1) << x, y, 0, 0);  //初始值
 }
 
 RM_kalmanfilter::~RM_kalmanfilter() {}
 
-Point2f RM_kalmanfilter::predict_point(Point2f _p) {
+cv::Point2f RM_kalmanfilter::predict_point(cv::Point2f _p) {
   // p = _p;
-  Mat prediction = KF_.predict();
-  Point2f predict_pt = Point2f(prediction.at<float>(0), 0);
+  cv::Mat prediction = KF_.predict();
+  cv::Point2f predict_pt = cv::Point2f(prediction.at<float>(0), 0);
 
   measurement_matrix.at<float>(0, 0) = _p.x;
 
@@ -27,12 +27,17 @@ Point2f RM_kalmanfilter::predict_point(Point2f _p) {
   return predict_pt;
 }
 
-void RM_kalmanfilter::reset() { measurement_matrix = Mat::zeros(2, 1, CV_32F); }
+void RM_kalmanfilter::reset() {
+  measurement_matrix = cv::Mat::zeros(2, 1, CV_32F);
+}
 
 //
 float RM_kalmanfilter::use_RM_KF(float _top, float _yaw_angle,
                                  cv::Point _armor_center) {
-  float armor_vary = armor::Distance(lost_armor_center, _armor_center);
+  float armor_vary = sqrt((lost_armor_center.x - _armor_center.x) *
+                              (lost_armor_center.x - _armor_center.x) +
+                          (lost_armor_center.y - _armor_center.y) *
+                              (lost_armor_center.y - _armor_center.y));
   lost_armor_center = _armor_center;
   cv::namedWindow("filter_trackbar");
   cv::createTrackbar("multiple_", "filter_trackbar", &multiple_, 1000, NULL);
@@ -40,7 +45,7 @@ float RM_kalmanfilter::use_RM_KF(float _top, float _yaw_angle,
                      &first_ignore_time_, 100, NULL);
   cv::createTrackbar("armor_threshold_max_", "filter_trackbar", &multiple_, 100,
                      NULL);
-  imshow("filter_trackbar", filter_trackbar_);
+  cv::imshow("filter_trackbar", filter_trackbar_);
   top_angle_differ->top_angle_ = _top;
 
   // 第一次获取的陀螺仪数据时, 对上一时刻(不存在)的陀螺仪数据的假设
@@ -61,7 +66,7 @@ float RM_kalmanfilter::use_RM_KF(float _top, float _yaw_angle,
 
   std::cout << "top_angle_differ " << top_angle_differ->differ << std::endl;
 
-  Point2f top_differ = Point2f(top_angle_differ->differ * multiple_, 0);
+  cv::Point2f top_differ = cv::Point2f(top_angle_differ->differ * multiple_, 0);
   if (top_angle_differ->get_top_times > first_ignore_time_ &&
       armor_vary < armor_threshold_max_) {
     return _yaw_angle + predict_point(top_differ).x;
@@ -69,3 +74,4 @@ float RM_kalmanfilter::use_RM_KF(float _top, float _yaw_angle,
     return _yaw_angle;  // top_angle_differ->differ
   }
 }
+}  // namespace kalman

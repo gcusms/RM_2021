@@ -188,7 +188,16 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
                         pnp_.returnYawAngle(), armor_[0].armor_rect.center),
       pnp_.returnPitchAngle(), pnp_.returnDepth(), armor_.size(), 0);
 }
-
+/**
+ * @brief 求两点之间的距离
+ *
+ * @param a 点A
+ * @param b 点B
+ * @return double 两点之间的距离
+ */
+float Distance(cv::Point a, cv::Point b) {
+  return sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+}
 /**
  * @brief 判断大小
  *

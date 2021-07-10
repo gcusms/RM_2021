@@ -2,19 +2,16 @@
 #define RM_KALMANFILTER_H
 
 #include <iostream>
-using namespace std;
 #include <opencv2/opencv.hpp>
-#include <vector>
-using namespace cv;
 #include <queue>
+#include <vector>
 
-#include "module/armor/rm_armor.hpp"
 #include "rm_serial_port.hpp"
-
+namespace kalman {
 class RM_kalmanfilter {
  private:
   cv::KalmanFilter KF_;
-  Mat measurement_matrix;
+  cv::Mat measurement_matrix;
   cv::Mat filter_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
   cv::Point lost_armor_center = cv::Point();
   int multiple_ = 10;
@@ -38,14 +35,14 @@ class RM_kalmanfilter {
  public:
   RM_kalmanfilter();
   ~RM_kalmanfilter();
-  Point2f predict_point(Point2f _p);
+  cv::Point2f predict_point(cv::Point2f _p);
   void reset();
 
   float use_RM_KF(float top, float _yaw_angle, cv::Point armor_center);
   // void use_RM_kf(top_diff_Queue *top_angle_differ, serial_port::SerialPort
   // serial_);
-
   float anti_range = 1.5;
 };
 
+}  // namespace kalman
 #endif  // RM_KALMANFILTER_H
