@@ -6,6 +6,7 @@
 
 #include "devices/serial/rm_serial_port.hpp"
 #include "module/angle_solve/rm_solve_pnp.hpp"
+#include "module/filter/filter.hpp"
 
 namespace armor {
 struct Armor_Data {
@@ -146,7 +147,9 @@ class RM_ArmorDetector {
   angle_solve::RM_Solvepnp pnp_ = angle_solve::RM_Solvepnp(
       "devices/camera/cameraParams/cameraParams_407.xml",
       "module/angle_solve/pnp_config.xml");
-
+  serial_port::SerialPort serial_ =
+      serial_port::SerialPort("devices/serial/serial_config.xml");
+  RM_kalmanfilter kalman_;
   Armor_Data armor_data_;
 
   std::vector<Armor_Data> armor_;

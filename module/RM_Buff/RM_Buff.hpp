@@ -1,15 +1,16 @@
 #ifndef RM_BUFFDETECTION_H_
 #define RM_BUFFDETECTION_H_
 
-#include "module/angle_solve/rm_solve_pnp.hpp"
-#include "module/RM_Buff/Center_R/Center_R.hpp"
-#include "module/RM_Buff/Target/Target.hpp"
-#include "module/RM_Buff/RM_FPS/RM_FPS.h"
-#include "devices/serial/rm_serial_port.hpp"
-#include "module/roi/rm_roi.h"
 #include <algorithm>
 #include <string>
 #include <vector>
+
+#include "devices/serial/rm_serial_port.hpp"
+#include "module/RM_Buff/Center_R/Center_R.hpp"
+#include "module/RM_Buff/RM_FPS/RM_FPS.h"
+#include "module/RM_Buff/Target/Target.hpp"
+#include "module/angle_solve/rm_solve_pnp.hpp"
+#include "module/roi/rm_roi.h"
 
 using namespace cv;
 
@@ -22,8 +23,7 @@ namespace buff {
 
 // 扇叶状态
 
-struct Buff_Param
-{
+struct Buff_Param {
   // BGR
   int RED_BUFF_GRAY_TH;
   int RED_BUFF_COLOR_TH;
@@ -88,24 +88,20 @@ struct Buff_Param
   float TARGET_X;
 
   Buff_Param()  // TODO :添加默认参数
-  {
-  }
+  {}
 };
 
-struct Buff_Ctrl
-{
+struct Buff_Ctrl {
   int IS_PARAM_ADJUSTMENT;
   int IS_SHOW_BIN_IMG;
   int PROCESSING_MODE;
 };
 
-struct Buff_Cfg
-{
+struct Buff_Cfg {
   Buff_Param param;
-  Buff_Ctrl  ctrl;
+  Buff_Ctrl ctrl;
 
-  Buff_Cfg()
-  {
+  Buff_Cfg() {
     // Buff
   }
 };
@@ -122,7 +118,7 @@ struct Buff_Cfg
 
 // TODO：能量机关类 继承抽象类
 class RM_Buff {
-public:
+ public:
   // 初始化参数结构体
   // RM_Buff() = default;
   RM_Buff(const std::string& _buff_config_address);
@@ -135,7 +131,8 @@ public:
    * @param  _receive_info    串口接收结构体
    * @param  _send_info       串口发送结构体
    */
-  void runTask(Mat& _input_img, serial_port::Receive_Data& _receive_info, serial_port::Write_Data& _send_info);
+  void runTask(Mat& _input_img, serial_port::Receive_Data& _receive_info,
+               serial_port::Write_Data& _send_info);
 
   /**
    * @brief 总执行函数（接口）
@@ -143,9 +140,10 @@ public:
    * @param  _receive_info    串口接收结构体
    * @return Send_Info 串口发送结构体
    */
-  serial_port::Write_Data runTask(Mat& _input_img, serial_port::Receive_Data& _receive_info);
+  serial_port::Write_Data runTask(Mat& _input_img,
+                                  serial_port::Receive_Data& _receive_info);
 
-private:
+ private:
   /**
    * @brief 获取参数更新结构体
    * @param[in]  _fs               文件对象
@@ -166,19 +164,19 @@ private:
   void displayDst();
 
   // 类中全局变量
-  Mat             src_img_;          // 输入原图
-  Mat             dst_img_;          // 图像效果展示图
+  Mat src_img_;                           // 输入原图
+  Mat dst_img_;                           // 图像效果展示图
   std::vector<Point2f> target_2d_point_;  // 目标二维点集
-  RotatedRect     target_rect_;      // 目标矩形
-  int             my_color_;         // 当前自己的颜色
-  Buff_Cfg        buff_config_;      // 参数结构体
+  RotatedRect target_rect_;               // 目标矩形
+  int my_color_;                          // 当前自己的颜色
+  Buff_Cfg buff_config_;                  // 参数结构体
 
   bool is_find_last_target_;  // 上一帧是否发现目标 true：发现 false：未发现
-  bool is_find_target_;       // 是否发现目标 true：发现 false：未发现
+  bool is_find_target_;  // 是否发现目标 true：发现 false：未发现
 
   Target last_target_;  //  上一个打击目标
 
-private:
+ private:
   /* 预处理 */
   /**
    * @brief 预处理的模式
@@ -195,9 +193,7 @@ private:
    * @param[in]  _my_color        颜色参数
    * @param[in]  _process_moudle  预处理模式
    */
-  void imageProcessing(Mat&                     _input_img,
-                       Mat&                     _output_img,
-                       const int&               _my_color,
+  void imageProcessing(Mat& _input_img, Mat& _output_img, const int& _my_color,
                        const Processing_Moudle& _process_moudle);
 
   /**
@@ -222,8 +218,8 @@ private:
   Mat ele_ = getStructuringElement(MORPH_ELLIPSE, Size(3, 3));  // 椭圆内核
 
   // BGR
-  std::vector<Mat> split_img_;   //分通道图
-  int         average_th_;  //平均阈值
+  std::vector<Mat> split_img_;  //分通道图
+  int average_th_;              //平均阈值
 
   // HSV
   Mat hsv_img_;  // hsv预处理输入图
@@ -233,7 +229,7 @@ private:
   Mat trackbar_img_ = Mat::zeros(1, 300, CV_8UC1);  // 预处理
 #endif                                              // !RELEASE
 
-private:
+ private:
   /* 查找目标 */
   /**
    * @brief 查找目标
@@ -241,7 +237,8 @@ private:
    * @param  _input_bin_img   输入二值图
    * @param  _target_box      输出目标容器
    */
-  void findTarget(Mat& _input_dst_img, Mat& _input_bin_img, std::vector<Target>& _target_box);
+  void findTarget(Mat& _input_dst_img, Mat& _input_bin_img,
+                  std::vector<Target>& _target_box);
 
   // 内轮廓
   FanArmor small_target_;
@@ -261,7 +258,7 @@ private:
 
   // 轮廓点集 轮廓关系
   std::vector<std::vector<Point>> contours_;
-  std::vector<Vec4i>         hierarchy_;
+  std::vector<Vec4i> hierarchy_;
 
   // 小轮廓条件(area and length)
   float small_rect_area_;
@@ -281,7 +278,7 @@ private:
   int area_ratio_min_int_;
 #endif  // !RELEASE
 
-private:
+ private:
   /**
    * @brief 判断是否有目标
    * @param[in]  _input_img       绘制未激活的目标
@@ -291,7 +288,7 @@ private:
    */
   bool isFindTarget(Mat& _input_img, std::vector<Target>& _target_box);
 
-private:
+ private:
   /**
    * @brief  查找圆心
    * @param  _input_src_img   输入src原图
@@ -300,26 +297,26 @@ private:
    * @param  _is_find_target  是否发现扇叶目标
    * @return Point2f          返回圆心R中点坐标
    */
-  Point2f
-  findCircleR(Mat& _input_src_img, Mat& _input_bin_img, Mat& _dst_img, const bool& _is_find_target);
+  Point2f findCircleR(Mat& _input_src_img, Mat& _input_bin_img, Mat& _dst_img,
+                      const bool& _is_find_target);
 
-  bool          is_circle_;           // 是否找到圆心
-  Point2f       delta_height_point_;  // 获取装甲板的高度点差
-  Point2f       roi_global_center_;   // roi 圆心中点位置(在原图中)
-  Mat           result_img_;          // 二值图
-  Mat           roi_img_;             // 截取原图
-  roi::ImageRoi roi_tool_;            // roi截取工具
+  bool is_circle_;              // 是否找到圆心
+  Point2f delta_height_point_;  // 获取装甲板的高度点差
+  Point2f roi_global_center_;   // roi 圆心中点位置(在原图中)
+  Mat result_img_;              // 二值图
+  Mat roi_img_;                 // 截取原图
+  roi::ImageRoi roi_tool_;      // roi截取工具
 
-  Center_R              center_r_;          // 候选圆心R
-  std::vector<std::vector<Point>> contours_r_;        // 中心R的遍历点集
-  Point2f               roi_local_center_;  // 截取roi的图像中心点(在roi_img中)
-  std::vector<Center_R>      center_r_box_;      // 第一次筛选之后得到的待选中心R
-  Point2f               final_center_r_;    // 最终圆心（假定/真实）
+  Center_R center_r_;                           // 候选圆心R
+  std::vector<std::vector<Point>> contours_r_;  // 中心R的遍历点集
+  Point2f roi_local_center_;  // 截取roi的图像中心点(在roi_img中)
+  std::vector<Center_R> center_r_box_;  // 第一次筛选之后得到的待选中心R
+  Point2f final_center_r_;              // 最终圆心（假定/真实）
 
-private:
+ private:
   /* 计算运转状态值：速度、方向、角度 */
   /**
-   * @brief 计算运转状态值：速度、方向、角度 
+   * @brief 计算运转状态值：速度、方向、角度
    * @param  _is_find_target  是否发现目标
    */
   void judgeCondition(const bool& _is_find_target);
@@ -357,21 +354,21 @@ private:
   float last_diff_angle_;
 
   // 方向
-  float filter_direction_;      // 第二次滤波方向
-  int   final_direction_;       // 最终的方向
-  int   last_final_direction_;  // 上一次最终的方向
-  float current_direction_;     // 当前方向
-  float last_direction_;        // 上一次方向
-  int   find_cnt_;              // 发现目标次数
-  float d_angle_;               // 滤波器系数
-  int   confirm_cnt_;           // 记录达到条件次数
-  bool  is_confirm_;            // 判断是否达到条件
+  float filter_direction_;    // 第二次滤波方向
+  int final_direction_;       // 最终的方向
+  int last_final_direction_;  // 上一次最终的方向
+  float current_direction_;   // 当前方向
+  float last_direction_;      // 上一次方向
+  int find_cnt_;              // 发现目标次数
+  float d_angle_;             // 滤波器系数
+  int confirm_cnt_;           // 记录达到条件次数
+  bool is_confirm_;           // 判断是否达到条件
 
   // 速度
-  float  current_speed_;  //当前转速
-  double last_time_;      // 上一帧的时间
+  float current_speed_;  //当前转速
+  double last_time_;     // 上一帧的时间
 
-private:
+ private:
   /* 计算预测量 */
 
   /**
@@ -390,7 +387,8 @@ private:
   float fixedPredict(const float& _bullet_velocity);
 
   // 变化预测量
-  void mutativePredict(const float& _input_predict_quantity, float& _output_predict_quantity);
+  void mutativePredict(const float& _input_predict_quantity,
+                       float& _output_predict_quantity);
 
   // 当前弧度
   float current_radian_;
@@ -405,7 +403,7 @@ private:
   // 目标直线距离
   float target_z_;
   // 手动补偿值
-  int   offset_angle_int_;
+  int offset_angle_int_;
   float offset_angle_float_;
   // 子弹飞行时间
   float bullet_tof_;
@@ -414,7 +412,7 @@ private:
   // 最终合成的预测量
   float final_forecast_quantity_;
 
-private:
+ private:
   /* 计算获取最终目标（矩形、顶点） */
 
   /**
@@ -425,11 +423,11 @@ private:
    * @param  _input_dst_img    输入画板
    * @param  _is_find_target   是否有目标
    */
-  void calculateTargetPointSet(const float&     _predict_quantity,
-                               const Point2f&   _final_center_r,
+  void calculateTargetPointSet(const float& _predict_quantity,
+                               const Point2f& _final_center_r,
                                std::vector<Point2f>& _target_2d_point,
-                               Mat&             _input_dst_img,
-                               const bool&      _is_find_target);
+                               Mat& _input_dst_img,
+                               const bool& _is_find_target);
 
   // 特殊的弧度
   double theta_;
@@ -446,41 +444,36 @@ private:
   // 轨迹圆半径
   float radio_;
 
-private:
+ private:
   /* 计算云台角度 */
 
   angle_solve::RM_Solvepnp buff_pnp_ = angle_solve::RM_Solvepnp(
-      "/home/jun/workplace/Github/RM_code/RM_2020_vision_code/Basis/RM_VideoCapture/cameraParams/"
-      "cameraParams_1333.xml",
-      "/home/jun/workplace/Github/RM_code/RM_2020_vision_code/Basis/rm_solvepnp/pnp_config.xml");
+      "devices/camera/cameraParams/cameraParams_407.xml",
+      "module/angle_solve/pnp_config.xml");
 
-private:
+ private:
   /* 自动控制 */
 
-private:
+ private:
   /* 更新上一帧数据 */
 
   void updateLastData(const bool& _is_find_target);
 
-private:
+ private:
   // 帧率测试
   RM_FPS buff_fps_1_{"Part 1"};
   RM_FPS buff_fps_2_{"Part 2"};
   RM_FPS buff_fps_;  // 计算时间
 };
 
-inline void RM_Buff::Input(Mat& _input_img, const int& _my_color)
-{
-  this->src_img_  = _input_img;
+inline void RM_Buff::Input(Mat& _input_img, const int& _my_color) {
+  this->src_img_ = _input_img;
   this->my_color_ = _my_color;
   this->src_img_.copyTo(this->dst_img_);
   this->is_find_target_ = false;
 }
 
-inline void RM_Buff::displayDst()
-{
-  imshow("dst_img", this->dst_img_);
-}
+inline void RM_Buff::displayDst() { imshow("dst_img", this->dst_img_); }
 }  // namespace buff
 
 #endif  // !RM_BUFFDETECTION_H

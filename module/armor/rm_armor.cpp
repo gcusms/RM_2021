@@ -192,7 +192,12 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
     imshow("armor_draw_img", draw_img_);
     draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
+  return serial_.gainWriteData(
+      pnp_.returnYawAngle() +
+          kalman_.use_RM_KF(_receive_data.Receive_Yaw_Angle_Info.yaw_angle),
+      pnp_.returnPitchAngle(), pnp_.returnDepth(), armor_.size(), 0);
 }
+
 /**
  * @brief 判断大小
  *
