@@ -104,7 +104,12 @@ class RM_ArmorDetector {
   void free_Memory();              //释放内存
   int motion_Direction();          //判断装甲板运动方向
   inline Armor_Data returnFinalArmor(int _num) { return armor_[_num]; }
-
+  inline Point returnFinalArmorCenter(int _num) {
+    return armor_[num].armor_rect.center;
+  }
+  inline int returnFinalArmorDistanceCenter(int _num) {
+    return armor_[num].distance_center;
+  }
   /**
    * @brief 指定返回已排序后第几个装甲板的参数
    *
@@ -116,7 +121,7 @@ class RM_ArmorDetector {
   inline int returnFinalArmorDistinguish(int _num) {
     return armor_[_num].distinguish;
   }
-  inline int returnArmornum() { return armor_.size(); };
+  inline int returnArmorNum() { return armor_.size(); };
 
   RM_ArmorDetector() {}
   RM_ArmorDetector(std::string _armor_config);
@@ -139,8 +144,8 @@ class RM_ArmorDetector {
   cv::Mat armor_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
 
   angle_solve::RM_Solvepnp pnp_ = angle_solve::RM_Solvepnp(
-    "devices/camera/cameraParams/cameraParams_407.xml",
-    "module/angle_solve/pnp_config.xml");
+      "devices/camera/cameraParams/cameraParams_407.xml",
+      "module/angle_solve/pnp_config.xml");
 
   Armor_Data armor_data_;
 
