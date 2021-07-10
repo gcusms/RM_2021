@@ -149,8 +149,8 @@ class RM_ArmorDetector {
       "module/angle_solve/pnp_config.xml");
   serial_port::SerialPort serial_ =
       serial_port::SerialPort("devices/serial/serial_config.xml");
-
   kalman::RM_kalmanfilter kalman_ = kalman::RM_kalmanfilter();
+
   Armor_Data armor_data_;
 
   std::vector<Armor_Data> armor_;

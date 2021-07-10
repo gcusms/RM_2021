@@ -169,13 +169,17 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
   if (find_Light()) {
     if (fitting_Armor()) {
       final_Armor();
+      pnp_.run_Solvepnp(_receive_data.bullet_velocity, armor_[0].distinguish,
+                        armor_[0].armor_rect);
       if (armor_config_.armor_draw == 1 || light_config_.light_draw == 1 ||
           armor_config_.armor_edit == 1 || light_config_.light_edit == 1) {
         imshow("armor_draw_img", draw_img_);
         draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
       }
-      pnp_.run_Solvepnp(_receive_data.bullet_velocity, armor_[0].distinguish,
-                        armor_[0].armor_rect);
+      return serial_.gainWriteData(
+          kalman_.use_RM_KF(_receive_data.Receive_Yaw_Angle_Info.yaw_angle,
+                            pnp_.returnYawAngle(), armor_[0].armor_rect.center),
+          pnp_.returnPitchAngle(), pnp_.returnDepth(), armor_.size(), 0);
     }
   }
   if (armor_config_.armor_draw == 1 || light_config_.light_draw == 1 ||
@@ -185,7 +189,7 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
   }
   return serial_.gainWriteData(
       kalman_.use_RM_KF(_receive_data.Receive_Yaw_Angle_Info.yaw_angle,
-                        pnp_.returnYawAngle(), armor_[0].armor_rect.center),
+                        pnp_.returnYawAngle(), cv::Point(0, 0)),
       pnp_.returnPitchAngle(), pnp_.returnDepth(), armor_.size(), 0);
 }
 /**
@@ -472,7 +476,7 @@ cv::Mat RM_ArmorDetector::gray_Pretreat(cv::Mat &_src_img,
                                         const int _my_color) {
   cv::cvtColor(_src_img, gray_img_, cv::COLOR_BGR2GRAY);
   switch (_my_color) {
-    case 0:
+    case serial_port::BLUE:
       if (image_config_.gray_edit) {
         cv::namedWindow("gray_trackbar");
         cv::createTrackbar("gray_th", "gray_trackbar",
@@ -513,7 +517,7 @@ cv::Mat RM_ArmorDetector::bgr_Pretreat(cv::Mat &_src_img, const int _my_color) {
   cv::split(_src_img, _split);
   static cv::Mat bin_color_img;
   switch (_my_color) {
-    case 0:
+    case serial_port::BLUE:
       cv::subtract(_split[0], _split[2], bin_color_img);  // r - b
       if (image_config_.color_edit) {
         cv::namedWindow("color_trackbar");
@@ -554,8 +558,7 @@ cv::Mat RM_ArmorDetector::bgr_Pretreat(cv::Mat &_src_img, const int _my_color) {
 cv::Mat RM_ArmorDetector::hsv_Pretreat(cv::Mat &_src_img, const int _my_color) {
   cv::cvtColor(_src_img, hsv_img, cv::COLOR_BGR2HSV_FULL);
   switch (_my_color) {
-    case 0:
-
+    case serial_port::BLUE:
       if (image_config_.color_edit) {
         cv::namedWindow("hsv_trackbar");
         cv::createTrackbar("blue_h_min:", "hsv_trackbar",
@@ -596,14 +599,12 @@ cv::Mat RM_ArmorDetector::hsv_Pretreat(cv::Mat &_src_img, const int _my_color) {
                            &image_config_.v_red_max, 255, NULL);
         cv::imshow("hsv_trackbar", this->hsv_trackbar_);
       }
-
       cv::inRange(hsv_img,
                   cv::Scalar(image_config_.h_red_min, image_config_.s_red_min,
                              image_config_.v_red_min),
                   cv::Scalar(image_config_.h_red_max, image_config_.s_red_max,
                              image_config_.v_red_max),
                   bin_color_img);
-
       break;
   }
 

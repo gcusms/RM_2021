@@ -34,10 +34,13 @@ void RM_kalmanfilter::reset() {
 //
 float RM_kalmanfilter::use_RM_KF(float _top, float _yaw_angle,
                                  cv::Point _armor_center) {
-  float armor_vary = sqrt((lost_armor_center.x - _armor_center.x) *
-                              (lost_armor_center.x - _armor_center.x) +
-                          (lost_armor_center.y - _armor_center.y) *
-                              (lost_armor_center.y - _armor_center.y));
+  if (_armor_center == cv::Point()) {
+    return _yaw_angle;
+  }
+  double armor_vary = std::sqrt((lost_armor_center.x - _armor_center.x) *
+                                    (lost_armor_center.x - _armor_center.x) +
+                                (lost_armor_center.y - _armor_center.y) *
+                                    (lost_armor_center.y - _armor_center.y));
   lost_armor_center = _armor_center;
   cv::namedWindow("filter_trackbar");
   cv::createTrackbar("multiple_", "filter_trackbar", &multiple_, 1000, NULL);
@@ -46,29 +49,27 @@ float RM_kalmanfilter::use_RM_KF(float _top, float _yaw_angle,
   cv::createTrackbar("armor_threshold_max_", "filter_trackbar", &multiple_, 100,
                      NULL);
   cv::imshow("filter_trackbar", filter_trackbar_);
-  top_angle_differ->top_angle_ = _top;
+  top_angle_differ.top_angle = _top;
 
   // 第一次获取的陀螺仪数据时, 对上一时刻(不存在)的陀螺仪数据的假设
-  if (top_angle_differ->get_top_times == 0) {
-    top_angle_differ->top_angle = 0;
+  if (top_angle_differ.get_top_times == 0) {
+    top_angle_differ.top_angle = 0;
   }
 
   std::cout << "top: " << _top << std::endl;
 
-  top_angle_differ->get_top_times++;  // 自动计数 -> 获得陀螺仪数据的次数
+  top_angle_differ.get_top_times++;  // 自动计数 -> 获得陀螺仪数据的次数
 
-  top_angle_differ->differ =
-      top_angle_differ->top_angle_ - top_angle_differ->top_angle;
+  top_angle_differ.differ =
+      top_angle_differ.top_angle_ - top_angle_differ.top_angle;
+  // 这一时刻的陀螺仪数据 更新为 上一时刻的陀螺仪数据
+  top_angle_differ.top_angle = top_angle_differ.top_angle_;
 
-  top_angle_differ->top_angle =
-      top_angle_differ
-          ->top_angle_;  // 这一时刻的陀螺仪数据 更新为 上一时刻的陀螺仪数据
+  std::cout << "top_angle_differ " << top_angle_differ.differ << std::endl;
 
-  std::cout << "top_angle_differ " << top_angle_differ->differ << std::endl;
-
-  cv::Point2f top_differ = cv::Point2f(top_angle_differ->differ * multiple_, 0);
-  if (top_angle_differ->get_top_times > first_ignore_time_ &&
-      armor_vary < armor_threshold_max_) {
+  cv::Point2f top_differ = cv::Point2f(top_angle_differ.differ * multiple_, 0);
+  if (top_angle_differ.get_top_times > first_ignore_time_/*  &&
+      armor_vary < armor_threshold_max_ */) {
     return _yaw_angle + predict_point(top_differ).x;
   } else {
     return _yaw_angle;  // top_angle_differ->differ

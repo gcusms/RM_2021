@@ -22,6 +22,7 @@ enum BuffLength {
 
 };
 enum color {
+  ALL,
   BLUE,
   RED,
   /**
@@ -121,13 +122,13 @@ struct Write_Data {
   float yaw_angle;
   float pitch_angle;
   Write_Data() {
-     symbol_yaw =0;
-     symbol_pitch =0;
-     depth =0;
-     is_shooting =0;
-     data_type =0;
-     yaw_angle =0.f;
-     pitch_angle =0.f;
+    symbol_yaw = 0;
+    symbol_pitch = 0;
+    depth = 0;
+    is_shooting = 0;
+    data_type = 0;
+    yaw_angle = 0.f;
+    pitch_angle = 0.f;
   }
 };
 

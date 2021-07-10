@@ -5,10 +5,11 @@ Connector::Connector() {}
 Connector::~Connector() {}
 
 void Connector::run() {
-
   while (true) {
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
+    } else {
+      cap_.read(src_img_);
     }
     if (!src_img_.empty()) {
       serial_.updateReceiveInformation();
