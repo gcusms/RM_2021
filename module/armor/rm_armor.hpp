@@ -104,7 +104,7 @@ class RM_ArmorDetector {
   void free_Memory();              //释放内存
   int motion_Direction();          //判断装甲板运动方向
   inline Armor_Data returnFinalArmor(int _num) { return armor_[_num]; }
-  inline Point returnFinalArmorCenter(int _num) {
+  inline cv::Point returnFinalArmorCenter(int _num) {
     return armor_[num].armor_rect.center;
   }
   inline int returnFinalArmorDistanceCenter(int _num) {
