@@ -170,8 +170,10 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
     if (fitting_Armor()) {
       final_Armor();
       std::cout << "陀螺判断 = "
-                << top_.run_Top(
-                       _receive_data.Receive_Yaw_Angle_Info.yaw_angle) *10
+                << top_.run_Top(_src_img,
+                                _receive_data.Receive_Yaw_Angle_Info.yaw_angle,
+                                armor_[0].armor_rect.center) *
+                       10
                 << std::endl;
       pnp_.run_Solvepnp(_receive_data.bullet_velocity, armor_[0].distinguish,
                         armor_[0].armor_rect);
@@ -483,7 +485,7 @@ cv::Mat RM_ArmorDetector::gray_Pretreat(cv::Mat &_src_img,
   switch (_my_color) {
     case serial_port::RED:
 
-          if (image_config_.gray_edit) {
+      if (image_config_.gray_edit) {
         cv::namedWindow("gray_trackbar");
         cv::createTrackbar("gray_th", "gray_trackbar",
                            &image_config_.red_armor_gray_th, 255, NULL);
@@ -494,7 +496,7 @@ cv::Mat RM_ArmorDetector::gray_Pretreat(cv::Mat &_src_img,
 
       break;
     default:
-          if (image_config_.gray_edit) {
+      if (image_config_.gray_edit) {
         cv::namedWindow("gray_trackbar");
         cv::createTrackbar("gray_th", "gray_trackbar",
                            &image_config_.blue_armor_gray_th, 255, NULL);

@@ -21,7 +21,7 @@ struct Top_Data {
 class Armor_Top {
  private:
   Top_Data top_data_;          // 小陀螺状态
-  int count = 0;               // 运行次数计数
+  int count_ = 0;              // 运行次数计数
   int min_cycle_count_ = 5;    // 最小周期
   int max_cycle_count_ = 200;  // 最大周期
   float lost_data_;            // 上个数据
@@ -32,8 +32,8 @@ class Armor_Top {
   int minimum_error_ = 50;     // 最小误差
   int true_floor_ = 2;         // 通过下限
   int true_upper_ = 5;         // 通过上限
-  float data_add_ ;
-  float aver_data_; 
+  float data_add_;
+  float aver_data_;
   cv::Mat top_trackbar_ = cv::Mat::zeros(1, 300, CV_8UC1);
 
  public:
@@ -43,7 +43,7 @@ class Armor_Top {
    * @param _data 陀螺仪yaw数据
    * @return Top_Status
    */
-  float run_Top(float _data);
+  float run_Top(cv::Mat &_src_img, float _data, cv::Point _armor_center);
   /**
    * @brief 小陀螺状态清零
    *
@@ -53,7 +53,7 @@ class Armor_Top {
    * @brief 计数器清零
    *
    */
-  inline void countInitializ() { count = 0; }
+  inline void countInitializ() { count_ = 0; }
   Armor_Top();
   ~Armor_Top();
 };

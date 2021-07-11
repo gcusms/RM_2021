@@ -11,7 +11,7 @@ class Connector {
   cv::Mat src_img_;
   mv_camera::RM_VideoCapture mv_capture_ =
       mv_camera::RM_VideoCapture(mv_camera::CameraParam(
-          0, mv_camera::RESOLUTION_1280_X_800, mv_camera::EXPOSURE_600));
+          1, mv_camera::RESOLUTION_1280_X_800, mv_camera::EXPOSURE_600));
   armor::RM_ArmorDetector armor_ =
       armor::RM_ArmorDetector("module/armor/armor_config.xml");
   serial_port::SerialPort serial_ =
