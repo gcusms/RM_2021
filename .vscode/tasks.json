@@ -7,11 +7,11 @@
 		"command": "/usr/bin/g++", /* 这⾥填写你的编译器地址 */
 		"args": [
 			/* 类似与qt的Pro⽂件⾥开始的那⼏句 */
-			"-Ofast",
-			"-march=native",
-			"-flto",
-			"-frename-registers",
-			"-std=c++11",// 静态链接
+			// "-Ofast",
+			// "-march=native",
+			// "-flto",
+			// "-frename-registers",
+			"-std=c++14",// 静态链接
 			"-static-libgcc",
 			"-lpthread",
 
@@ -31,6 +31,7 @@
 			"-I","${workspaceFolder}/module/RM_Buff/Target",
 			"-I","${workspaceFolder}/module/RM_Buff",
 			"-I","${workspaceFolder}/module/top_detect",
+			"-I","${workspaceFolder}/module/orc",
 			"-I","${workspaceFolder}/base",
 			"-I","/usr/local/include",
 			"-I","/usr/local/include/opencv4",
@@ -52,6 +53,7 @@
 			"${workspaceFolder}/module/RM_Buff/Target/Target.cpp",
 			"${workspaceFolder}/module/RM_Buff/RM_Buff.cpp",
 			"${workspaceFolder}/module/top_detect/top.cpp",
+			"${workspaceFolder}/module/orc/orc.cpp",
 			"${workspaceFolder}/base/connector.cpp",
 			"${workspaceFolder}/user/main.cpp",/* ${workspaceFolder}表⽰路径从当前项⽬⽂件夹开始 */
 			"-o", /* 编译输出⽂件的存放路径 */

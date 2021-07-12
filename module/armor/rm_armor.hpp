@@ -8,6 +8,9 @@
 #include "module/angle_solve/rm_solve_pnp.hpp"
 #include "module/filter/filter.hpp"
 #include "module/top_detect/top.hpp"
+#include "module/orc/orc.hpp"
+#include "opencv_onnx_inferring.hpp"
+
 
 namespace armor {
 struct Armor_Data {
@@ -48,6 +51,7 @@ struct Armor_Cfg {
   int small_armor_aspect_min;
   int armor_type_th;
   int big_armor_aspect_max;
+  
 };
 
 struct Light_Cfg {
@@ -88,7 +92,12 @@ struct Image_Cfg {
   int gray_edit = 0;
   int color_edit = 0;
   int method = 0;
+
+
+
 };
+
+
 /**
  * @brief 图像处理
  *
@@ -97,14 +106,23 @@ class RM_ArmorDetector {
   //装甲板
  public:
   serial_port::Write_Data run_Armor(cv::Mat &_src_img,
-                                    serial_port::Receive_Data _receive_data);
-  bool light_Judge(int i, int j);  //判断左右灯条能否组成装甲板
+                                    serial_port::Receive_Data _receive_data );
+  bool light_Judge(int i, int j );  //判断左右灯条能否组成装甲板
   int average_Color();             //计算图像颜色平均值
   bool fitting_Armor();            //拟合装甲板
   bool find_Light();               //寻找灯条
   void final_Armor();              //最优装甲板
   void free_Memory();              //释放内存
-  int motion_Direction();          //判断装甲板运动方向
+  int    motion_Direction();          //判断装甲板运动方向
+
+/****************数字*************************/
+
+  bool NumberOrc();
+ cv::Mat Save_ROI( cv::Rect input_rect , cv::Mat img_input);
+
+/****************数字*************************/
+
+
   inline Armor_Data returnFinalArmor(int _num) { return armor_[_num]; }
   inline cv::Point returnFinalArmorCenter(int _num) {
     return armor_[num].armor_rect.center;
@@ -135,6 +153,10 @@ class RM_ArmorDetector {
   Armor_Cfg armor_config_;
   Image_Cfg image_config_;
   Light_Cfg light_config_;
+
+
+  Orc::OrcNumber OrcCtrl_  = Orc::OrcNumber("module/orc/orc_config.xml");
+  model module_ = model("mnist-8.onnx");
 
   cv::Mat frame;      //原图
   cv::Mat draw_img_;  //画板
@@ -172,6 +194,7 @@ class RM_ArmorDetector {
   int armor_position = 0;       //装甲板在车的位置
   int armor_direction = 0;      // 1向右 -1 向左
   int num = 0;                  //运行次数
+
 
   //图像
  private:

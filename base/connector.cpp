@@ -5,6 +5,7 @@ Connector::Connector() {}
 Connector::~Connector() {}
 
 void Connector::run() {
+  model module_("mnist-8.onnx");
   while (true) {
     if (mv_capture_.isindustryimgInput()) {
       src_img_ = mv_capture_.image();
@@ -40,7 +41,7 @@ void Connector::run() {
       mv_capture_.cameraReleasebuff();
       armor_.free_Memory();
       // usleep(1);
-      if (cv::waitKey(1) == 'q') {
+      if (cv::waitKey(0) == 'q') {
         return;
       }
     }

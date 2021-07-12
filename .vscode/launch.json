@@ -8,7 +8,7 @@
     {
 
         "name": "(gdb) Launch", /* 配置名称，将会在启动配置的下拉菜单中显⽰ */
-        "preLaunchTask": "build", /* 调试前执⾏ 'build'选项 */
+        // "preLaunchTask": "build", /* 调试前执⾏ 'build'选项 */
         "type": "cppdbg", /* 配置类型，这⾥只能为cppdbg */
         "request": "launch",/**/
         "program": "${workspaceFolder}/run.o", /*选择要调试的⽂件路径*/

@@ -26,7 +26,10 @@ RM_ArmorDetector::RM_ArmorDetector(std::string _armor_config) {
     fs_armor["S_BLUE_MAX"] >> image_config_.s_blue_max;
     fs_armor["V_BLUE_MIN"] >> image_config_.v_blue_min;
     fs_armor["V_BLUE_MAX"] >> image_config_.v_blue_max;
+
+
   }
+
   fs_armor["LIGHT_DRAW"] >> light_config_.light_draw;
   fs_armor["LIGHT_EDTI"] >> light_config_.light_edit;
   fs_armor["LIGHT_RATIO_W_H_MIN"] >> light_config_.ratio_w_h_min;
@@ -57,6 +60,8 @@ RM_ArmorDetector::RM_ArmorDetector(std::string _armor_config) {
 
   std::cout << "装甲板参数初始化成功" << std::endl;
   std::cout << "💚💚💚💚💚💚💚💚💚💚💚💚" << std::endl;
+
+
 }
 
 /**
@@ -162,8 +167,9 @@ bool RM_ArmorDetector::find_Light() {
  * @return false 无法得到装甲板
  */
 serial_port::Write_Data RM_ArmorDetector::run_Armor(
-    cv::Mat &_src_img, serial_port::Receive_Data _receive_data) {
+    cv::Mat &_src_img, serial_port::Receive_Data _receive_data ) {
   //图像处理
+  frame = _src_img.clone();
   run_Image(_src_img, _receive_data.my_color);
   draw_img_ = _src_img;
   if (find_Light()) {
@@ -180,6 +186,9 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
 
       if (armor_config_.armor_draw == 1 || light_config_.light_draw == 1 ||
           armor_config_.armor_edit == 1 || light_config_.light_edit == 1) {
+         cv::putText(draw_img_,to_string( pnp_.returnDepth()),
+                                  cv::Point(50,100),cv::FONT_HERSHEY_SIMPLEX,1,
+                                  cv::Scalar(0,255,255),1,cv::LINE_AA);
         imshow("armor_draw_img", draw_img_);
         draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
       }
@@ -191,6 +200,7 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
   }
   if (armor_config_.armor_draw == 1 || light_config_.light_draw == 1 ||
       armor_config_.armor_edit == 1 || light_config_.light_edit == 1) {
+
     imshow("armor_draw_img", draw_img_);
     draw_img_ = cv::Mat::zeros(_src_img.size(), CV_8UC3);
   }
@@ -199,6 +209,79 @@ serial_port::Write_Data RM_ArmorDetector::run_Armor(
                         pnp_.returnYawAngle(), cv::Point(0, 0)),
       pnp_.returnPitchAngle(), pnp_.returnDepth(), armor_.size(), 0);
 }
+
+
+
+/*********number*********************/
+
+cv::Mat RM_ArmorDetector::Save_ROI(cv::Rect input_rect , cv::Mat img_input)
+{
+  cv::Point Point_t;int width_ ,height_;
+  Point_t.x = input_rect.x + 10;
+  Point_t.y = input_rect.y  - 30;
+  width_ = input_rect.width -20;
+  height_ = input_rect.height +50;
+if(Point_t.x < 0)
+{
+  Point_t.x  = 0 ;
+}
+if(Point_t.y < 0)
+{
+  Point_t.y = 0;
+}
+if(Point_t.x+width_ > img_input.cols)
+{
+    width_ = img_input.cols - abs(Point_t.x);
+}
+if(Point_t.y+height_ > img_input.rows)
+{
+  height_ = img_input.rows - abs(Point_t.y);
+}
+
+return img_input(cv::Rect(Point_t,cv::Size(width_,height_)));
+
+}
+
+
+bool RM_ArmorDetector::NumberOrc()
+{
+
+    cv::namedWindow("数字number");
+    cv::createTrackbar("h_min_num", "数字number",&OrcCtrl_.num_cfg_.h_min_num,
+                       255, NULL);
+    cv::createTrackbar("s_min_num", "数字number",
+                       &OrcCtrl_.num_cfg_.s_min_num, 255, NULL);
+    cv::createTrackbar("v_min_num", "数字number",
+                       &OrcCtrl_.num_cfg_.v_min_num, 255, NULL);
+
+    cv::createTrackbar("CONFIDENT", "数字number",
+                       &OrcCtrl_.num_cfg_.Confident, 5000, NULL);//置信度
+    cv::createTrackbar("kernel_size", "数字number",
+                       &OrcCtrl_.num_cfg_.kennerl_size, 10, NULL);//置信度
+                       
+    cv::Mat Number_img = Save_ROI(armor_data_.armor_rect.boundingRect(),frame);
+    int k  =module_.inferring(Number_img,
+                                                                    2*OrcCtrl_.num_cfg_.kennerl_size-1,
+                                            cv::Scalar(OrcCtrl_.num_cfg_.h_min_num,OrcCtrl_.num_cfg_.s_min_num,OrcCtrl_.num_cfg_.v_min_num),
+                                            cv::Scalar(255,255,255),OrcCtrl_.num_cfg_.Confident);
+    if(OrcCtrl_.num_cfg_.switch_number == 1)
+    {
+      putText( frame, to_string(k), cv::Point(100, 100), 5,  5.0 ,cv::Scalar(0,360,360),
+                          2, cv::LINE_8, false );
+      cv::imshow("frame_number",frame);
+      cv::imshow("number",Number_img);
+    }
+
+
+      if(k  == 2)
+      {
+        return false;
+      }else{
+        return true;
+      }
+}
+
+/*********number*********************/
 /**
  * @brief 求两点之间的距离
  *
@@ -323,7 +406,7 @@ bool RM_ArmorDetector::fitting_Armor() {
  * @return true 找到了符合装甲板条件的位置
  * @return false 没找到了符合装甲板条件的位置
  */
-bool RM_ArmorDetector::light_Judge(int i, int j) {
+bool RM_ArmorDetector::light_Judge(int i, int j ) {
   armor_data_.left_light_height =
       MAX(light_[i].size.height, light_[i].size.width);
   armor_data_.left_light_width =
@@ -344,7 +427,8 @@ bool RM_ArmorDetector::light_Judge(int i, int j) {
       armor_data_.light_width_aspect <
           (armor_config_.light_width_ratio_max * 0.1) &&
       armor_data_.light_width_aspect >
-          (armor_config_.light_height_ratio_min * 0.1)) {
+          (armor_config_.light_height_ratio_min * 0.1)) 
+    {
     armor_data_.height = (armor_data_.left_light.size.height +
                           armor_data_.right_light.size.height) /
                          2;
@@ -377,12 +461,31 @@ bool RM_ArmorDetector::light_Judge(int i, int j) {
                   (armor_config_.small_armor_aspect_min * 0.1) &&
               (armor_data_.aspect_ratio < armor_config_.armor_type_th * 0.1)) {
             armor_data_.distinguish = 0;  // 小装甲板
-            return true;
+
+
+            if(NumberOrc())
+            {              
+              if(OrcCtrl_.num_cfg_.switch_number == 1)
+              {
+              cv::putText(draw_img_,"SMALL",cv::Point(50,50),cv::FONT_HERSHEY_SIMPLEX,2,
+                                      cv::Scalar(255,255,255),2,cv::LINE_AA);
+              }
+              return true;
+            }else       
+            {
+              return false;
+            }
           } else if (armor_data_.aspect_ratio >
                          (armor_config_.armor_type_th * 0.1) &&
                      armor_data_.aspect_ratio <
-                         (armor_config_.big_armor_aspect_max * 0.1)) {
-            armor_data_.distinguish = 1;  //大装甲板
+                         (armor_config_.big_armor_aspect_max * 0.1)){
+                        armor_data_.distinguish = 1;  //大装甲板
+                        NumberOrc();
+                        if(OrcCtrl_.num_cfg_.switch_number == 1)
+                        {
+                        cv::putText(draw_img_,"BIG",cv::Point(50,50),cv::FONT_HERSHEY_SIMPLEX,2,
+                                                cv::Scalar(255,255,255),2,cv::LINE_AA);
+                        }
             return true;
           }
         }
